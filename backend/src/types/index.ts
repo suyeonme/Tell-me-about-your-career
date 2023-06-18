@@ -1,2 +1,4 @@
 import HttpStatusCode from './httpStatusCode';
-export { HttpStatusCode };
+import { StatusMessage } from './common-response';
+
+export { HttpStatusCode, StatusMessage };
