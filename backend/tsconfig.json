@@ -19,9 +19,10 @@
     "baseUrl": ".",
     "paths": {
       "@*": ["src/*"],
-      "@interceptors/*": ["src/interceptors/*"],
-      "@types/*": ["src/types/*"],
-      "@utils/*": ["src/utils/*"],
+      "@interceptors/*": ["src/common/interceptors/*"],
+      "@interfaces/*": ["src/common/interfaces/*"],
+      "@helpers/*": ["src/common/helpers/*"],
+      "@models/*": ["src/models/*"],
 
     }
   },

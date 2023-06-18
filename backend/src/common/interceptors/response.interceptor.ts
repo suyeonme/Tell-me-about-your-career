@@ -2,13 +2,14 @@ import {
     Injectable,
     NestInterceptor,
     ExecutionContext,
-    CallHandler
+    CallHandler,
+    HttpStatus
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { isSuccessStatusCode, getStatusMessage } from '@utils';
-import { HttpStatusCode, type StatusMessage } from '@types';
+import { getStatusMessage } from '@common/helpers';
+import { type StatusMessage } from '@common/interfaces';
 
 /**
  * @summary Interceptor for common response format
@@ -18,7 +19,7 @@ export class CommonResponseInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
         return next.handle().pipe(
             map((data) => {
-                const statusCode: HttpStatusCode = context
+                const statusCode: HttpStatus = context
                     .switchToHttp()
                     .getResponse().statusCode;
                 const message: StatusMessage = getStatusMessage(statusCode);

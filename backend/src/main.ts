@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 
-import { CommonResponseInterceptor } from '@interceptors';
+import { CommonResponseInterceptor } from '@common/interceptors';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
