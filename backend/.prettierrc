@@ -1,8 +1,8 @@
 {
-  "singleQuote": true,
-  "trailingComma": "all",
-  "editor.formatOnSave": true,
   "semi": true,
+  "trailingComma": "none",
+  "singleQuote": true,
+  "printWidth": 80,
   "tabWidth": 4,
   "bracketSpacing": true
 }
