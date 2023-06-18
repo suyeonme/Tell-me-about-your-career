@@ -1,21 +1,28 @@
-import { Module } from '@nestjs/common';
+import { Module, ValidationPipe } from '@nestjs/common';
+import { APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { InterviewModule } from './interview/interview.module';
 import { UserModule } from './user/user.module';
+import { UserEntity } from './user/user.entity';
 
 @Module({
     imports: [
         TypeOrmModule.forRoot({
             type: 'sqlite',
             database: 'development.db',
-            entities: [],
+            entities: [UserEntity],
             synchronize: true
         }),
         InterviewModule,
         UserModule
     ],
     controllers: [],
-    providers: []
+    providers: [
+        {
+            provide: APP_PIPE,
+            useClass: ValidationPipe
+        }
+    ]
 })
 export class AppModule {}
