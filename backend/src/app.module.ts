@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
+import { InterviewModule } from './interview/interview.module';
 
 @Module({
-  imports: [],
+  imports: [InterviewModule],
   controllers: [],
   providers: [],
 })
