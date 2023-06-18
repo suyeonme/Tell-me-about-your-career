@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { InterviewModule } from './interview/interview.module';
+import { UserModule } from './user/user.module';
 
 @Module({
     imports: [
@@ -11,7 +12,8 @@ import { InterviewModule } from './interview/interview.module';
             entities: [],
             synchronize: true
         }),
-        InterviewModule
+        InterviewModule,
+        UserModule
     ],
     controllers: [],
     providers: []
