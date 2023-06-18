@@ -9,13 +9,22 @@
     "target": "es2017",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
-  }
+    "noFallthroughCasesInSwitch": false,
+    "baseUrl": ".",
+    "paths": {
+      "@*": ["src/*"],
+      "@interceptors/*": ["src/interceptors/*"],
+      "@types/*": ["src/types/*"],
+      "@utils/*": ["src/utils/*"],
+
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }
