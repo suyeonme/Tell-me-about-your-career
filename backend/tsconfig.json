@@ -23,6 +23,7 @@
       "@interfaces/*": ["src/common/interfaces/*"],
       "@helpers/*": ["src/common/helpers/*"],
       "@models/*": ["src/models/*"],
+      "@auth/*": ["src/auth/*"],
 
     }
   },
