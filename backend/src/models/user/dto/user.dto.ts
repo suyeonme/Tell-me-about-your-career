@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import { UserRole } from '../user.type';
+import { Role } from '../user.type';
 
 export class UserDto {
     @Expose()
@@ -18,5 +18,5 @@ export class UserDto {
     phone: string;
 
     @Expose()
-    role: UserRole;
+    role: Role;
 }

@@ -1,7 +1,7 @@
 import { PrimaryGeneratedColumn, Column, Entity } from 'typeorm';
 import { Exclude } from 'class-transformer';
 
-import { UserRole } from './user.type';
+import { Role } from './user.type';
 
 @Entity()
 export class User {
@@ -25,9 +25,9 @@ export class User {
     phone: string;
 
     @Column({
-        default: UserRole.USER
+        default: Role.User
     })
-    role: UserRole;
+    role: Role;
 
     // createdInterviews: InterviewEntity[];
     // favoriteInterviews: InterviewEntity[];
