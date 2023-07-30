@@ -1,6 +1,7 @@
 import { Module, ValidationPipe } from '@nestjs/common';
 import { APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
 
 import { InterviewModule } from './models/interview/interview.module';
 import { UserModule } from './models/user/user.module';
@@ -9,9 +10,13 @@ import { AuthModule } from './auth/auth.module';
 
 @Module({
     imports: [
+        ConfigModule.forRoot({
+            isGlobal: true,
+            envFilePath: `.${process.env.NODE_ENV}.env`
+        }),
         TypeOrmModule.forRoot({
             type: 'sqlite',
-            database: 'development.db',
+            database: `${process.env.NODE_ENV}.db`,
             entities: [User],
             synchronize: true
         }),
