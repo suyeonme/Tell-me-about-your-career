@@ -40,11 +40,10 @@ export class AuthService {
         return createdUser;
     }
 
-    async signin(
-        signinDto: SigninUserDto
-    ): Promise<{ user: User; access_token: string }> {
+    async signin(signinDto: SigninUserDto): Promise<{ access_token: string }> {
         const { email, password } = signinDto;
         const user = await this.usersService.findOneByEmail(email);
+
         if (!user) {
             throw new NotFoundException('user not found');
         }
@@ -56,18 +55,32 @@ export class AuthService {
             throw new BadRequestException('bad password');
         }
 
-        const access_token = await this.jwtService.signAsync({
-            sub: user.id,
-            username: user.username
-        });
-
         return {
-            user,
-            access_token
+            access_token: this.jwtService.sign({
+                sub: user.id,
+                username: user.username
+            })
         };
     }
 
     async hashPassword(password: string, salt: string): Promise<Buffer> {
         return (await scrypt(password, salt, 32)) as Buffer;
+    }
+
+    async validateUser(email: string, password: string): Promise<User> {
+        const user = await this.usersService.findOneByEmail(email);
+
+        if (!user) {
+            throw new NotFoundException('user not found');
+        }
+
+        const [salt, storedHash] = user.password.split('.');
+        const hash = await this.hashPassword(password, salt);
+
+        if (storedHash !== hash.toString('hex')) {
+            throw new BadRequestException('bad password');
+        }
+
+        return user;
     }
 }
