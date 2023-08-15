@@ -9,7 +9,7 @@ import {
 
 import { AuthService } from '@/auth/auth.service';
 import { LocalAuthGuard } from '@auth/guards/local-auth.guard';
-import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard';
+import { AccessTokenGuard } from '@auth/guards/access-token.guard';
 import { SignupUserDto, SigninUserDto } from '@models/user/dto';
 
 // signout시 응답데이터 제거
@@ -31,13 +31,13 @@ export class AuthController {
         return this.authService.signin(signinUserDto);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(AccessTokenGuard)
     @Get('/signout')
     async signout(@Request() req) {
         return this.authService.signout(req.user.id);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(AccessTokenGuard)
     @Get('/profile')
     getProfile(@Request() req) {
         return req.user;
