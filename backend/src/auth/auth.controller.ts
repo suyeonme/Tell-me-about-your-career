@@ -8,9 +8,12 @@ import {
 } from '@nestjs/common';
 
 import { AuthService } from '@/auth/auth.service';
-import { LocalAuthGuard } from '@/auth/local-auth.guard';
-import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
+import { LocalAuthGuard } from '@auth/guards/local-auth.guard';
+import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard';
 import { SignupUserDto, SigninUserDto } from '@models/user/dto';
+
+// signout시 응답데이터 제거
+// 응답 데이터 일관되도록 포맷
 
 @Controller('auth')
 export class AuthController {
@@ -26,6 +29,12 @@ export class AuthController {
     @Post('/signin')
     async login(@Request() req, @Body() signinUserDto: SigninUserDto) {
         return this.authService.signin(signinUserDto);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('/signout')
+    async signout(@Request() req) {
+        return this.authService.signout(req.user.id);
     }
 
     @UseGuards(JwtAuthGuard)

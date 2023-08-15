@@ -29,42 +29,42 @@ export class AuthService {
             throw new BadRequestException('email is use');
         }
 
-        const salt = randomBytes(8).toString('hex');
-        const hash = await this.hashPassword(signupUserDto.password, salt);
+        const salt = this.generateSalt();
+        const hash = await this.hashData(signupUserDto.password, salt);
         const hashedPassword = `${salt}.${hash.toString('hex')}`;
 
-        const createdUser = await this.usersService.create({
+        const user = await this.usersService.create({
             ...signupUserDto,
             password: hashedPassword
         });
-        return createdUser;
+
+        return user;
     }
 
-    async signin(signinDto: SigninUserDto): Promise<{ access_token: string }> {
+    async signin(
+        signinDto: SigninUserDto
+    ): Promise<{ access_token: string; refresh_token: string }> {
         const { email, password } = signinDto;
-        const user = await this.usersService.findOneByEmail(email);
+        const user = await this.validateUser(email, password);
 
-        if (!user) {
-            throw new NotFoundException('user not found');
-        }
+        const { access_token, refresh_token } =
+            await this.getAccessAndRefreshToken(user.id, user.username);
 
-        const [salt, storedHash] = user.password.split('.');
-        const hash = await this.hashPassword(password, salt);
+        await this.updateRefreshToken(user.id, refresh_token);
 
-        if (storedHash !== hash.toString('hex')) {
-            throw new BadRequestException('bad password');
-        }
-
-        return {
-            access_token: this.jwtService.sign({
-                sub: user.id,
-                username: user.username
-            })
-        };
+        return { access_token, refresh_token };
     }
 
-    async hashPassword(password: string, salt: string): Promise<Buffer> {
-        return (await scrypt(password, salt, 32)) as Buffer;
+    async signout(userId: number) {
+        return this.usersService.update(userId, { refresh_token: null });
+    }
+
+    async hashData(data: string, salt: string): Promise<Buffer> {
+        return (await scrypt(data, salt, 32)) as Buffer;
+    }
+
+    generateSalt(): string {
+        return randomBytes(8).toString('hex');
     }
 
     async validateUser(email: string, password: string): Promise<User> {
@@ -75,12 +75,56 @@ export class AuthService {
         }
 
         const [salt, storedHash] = user.password.split('.');
-        const hash = await this.hashPassword(password, salt);
+        const hash = await this.hashData(password, salt);
 
         if (storedHash !== hash.toString('hex')) {
             throw new BadRequestException('bad password');
         }
 
         return user;
+    }
+
+    async getAccessAndRefreshToken(
+        userId: number,
+        username: string
+    ): Promise<{ access_token: string; refresh_token: string }> {
+        const [access_token, refresh_token] = await Promise.all([
+            this.jwtService.signAsync(
+                {
+                    sub: userId,
+                    username
+                },
+                {
+                    secret: process.env.JWT_ACCESS_SECRET,
+                    expiresIn: process.env.JWT_ACCESS_EXPIRE_TIME
+                }
+            ),
+            this.jwtService.signAsync(
+                {
+                    sub: userId,
+                    username
+                },
+                {
+                    secret: process.env.JWT_REFRESH_SECRET,
+                    expiresIn: process.env.JWT_REFRESH_EXPIRE_TIME
+                }
+            )
+        ]);
+
+        return {
+            access_token,
+            refresh_token
+        };
+    }
+
+    async updateRefreshToken(
+        userId: number,
+        refreshToken: string
+    ): Promise<void> {
+        const salt = this.generateSalt();
+        const hashedRefreshToken = await this.hashData(refreshToken, salt);
+        await this.usersService.update(userId, {
+            refresh_token: hashedRefreshToken
+        });
     }
 }

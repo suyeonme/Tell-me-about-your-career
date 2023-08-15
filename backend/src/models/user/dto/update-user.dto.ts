@@ -1,17 +1,14 @@
 import {
     IsString,
-    IsEmail,
-    IsPhoneNumber,
     IsNotEmpty,
     MinLength,
-    Matches
+    Matches,
+    IsOptional,
+    ValidateIf
 } from 'class-validator';
 
-export class SignupUserDto {
-    @IsEmail()
-    @IsNotEmpty()
-    email: string;
-
+export class UpdateUserDto {
+    @IsOptional()
     @IsString()
     @MinLength(8)
     @IsNotEmpty()
@@ -22,19 +19,9 @@ export class SignupUserDto {
                 'Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.'
         }
     )
-    password: string;
+    password?: string;
 
     @IsString()
-    @MinLength(3)
-    username: string;
-
-    @IsString()
-    @IsNotEmpty()
-    job: string;
-
-    @IsPhoneNumber()
-    phone: string;
-
-    @IsString()
-    refreshToken: string;
+    @ValidateIf((_, value) => value !== null)
+    refresh_token: Buffer | null;
 }
