@@ -20,12 +20,12 @@ export class UserService {
     async findOneByEmail(email: string): Promise<User | null> {
         const user = await this.userRepository.findOneBy({ email });
 
-        if (!user) {
-            throw new HttpException(
-                'User with this email does not exist.',
-                HttpStatus.NOT_FOUND
-            );
-        }
+        // if (!user) {
+        //     throw new HttpException(
+        //         'User with this email does not exist.',
+        //         HttpStatus.NOT_FOUND
+        //     );
+        // }
 
         return user;
     }
@@ -33,12 +33,12 @@ export class UserService {
     async findOneById(userId: number): Promise<User | null> {
         const user = await this.userRepository.findOneBy({ id: userId });
 
-        if (!user) {
-            throw new HttpException(
-                'User with this id does not exist.',
-                HttpStatus.NOT_FOUND
-            );
-        }
+        // if (!user) {
+        //     throw new HttpException(
+        //         'User with this id does not exist.',
+        //         HttpStatus.NOT_FOUND
+        //     );
+        // }
 
         return user;
     }
@@ -51,5 +51,18 @@ export class UserService {
     async isUserExist(email: string): Promise<boolean> {
         const user = await this.findOneByEmail(email);
         return user ? true : false;
+    }
+
+    async remove(userId: number) {
+        const user = await this.findOneById(userId);
+
+        if (!user) {
+            throw new HttpException(
+                'User with this id does not exist.',
+                HttpStatus.NOT_FOUND
+            );
+        }
+
+        return this.userRepository.remove(user);
     }
 }

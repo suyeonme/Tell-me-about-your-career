@@ -29,6 +29,6 @@ export class User {
     })
     role: Role;
 
-    // createdInterviews: InterviewEntity[];
-    // favoriteInterviews: InterviewEntity[];
+    @Column({ nullable: true })
+    refreshToken: string | null;
 }

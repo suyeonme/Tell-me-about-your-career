@@ -4,7 +4,8 @@ import {
     IsPhoneNumber,
     IsNotEmpty,
     MinLength,
-    Matches
+    Matches,
+    IsOptional
 } from 'class-validator';
 
 export class SignupUserDto {
@@ -36,5 +37,6 @@ export class SignupUserDto {
     phone: string;
 
     @IsString()
-    refreshToken: string;
+    @IsOptional()
+    refreshToken?: string;
 }

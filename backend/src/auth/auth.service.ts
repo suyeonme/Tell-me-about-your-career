@@ -21,7 +21,12 @@ export class AuthService {
         private jwtService: JwtService
     ) {}
 
-    async signup(signupUserDto: SignupUserDto): Promise<User> {
+    async signup(signupUserDto: SignupUserDto): Promise<
+        User & {
+            refreshToken: string;
+            accessToken: string;
+        }
+    > {
         const isUserExist = await this.usersService.isUserExist(
             signupUserDto.email
         );
@@ -38,25 +43,52 @@ export class AuthService {
             password: hashedPassword
         });
 
-        return user;
+        const accessToken = await this.generateAccessToken(
+            user.id,
+            user.username
+        );
+        const refreshToken = await this.generateRefreshToken(
+            user.id,
+            user.username
+        );
+
+        await this.updateRefreshToken(user.id, refreshToken);
+
+        return {
+            ...user,
+            refreshToken,
+            accessToken
+        };
     }
 
-    async signin(
-        signinDto: SigninUserDto
-    ): Promise<{ access_token: string; refresh_token: string }> {
+    async signin(signinDto: SigninUserDto): Promise<
+        User & {
+            refreshToken: string;
+            accessToken: string;
+        }
+    > {
         const { email, password } = signinDto;
         const user = await this.validateUser(email, password);
 
-        const { access_token, refresh_token } =
-            await this.getAccessAndRefreshToken(user.id, user.username);
+        const accessToken = await this.generateAccessToken(
+            user.id,
+            user.username
+        );
+        const refreshToken = await this.generateRefreshToken(
+            user.id,
+            user.username
+        );
+        await this.updateRefreshToken(user.id, refreshToken);
 
-        await this.updateRefreshToken(user.id, refresh_token);
-
-        return { access_token, refresh_token };
+        return {
+            ...user,
+            refreshToken,
+            accessToken
+        };
     }
 
     async signout(userId: number) {
-        return this.usersService.update(userId, { refresh_token: null });
+        return this.usersService.update(userId, { refreshToken: null });
     }
 
     async hashData(data: string, salt: string): Promise<Buffer> {
@@ -84,37 +116,20 @@ export class AuthService {
         return user;
     }
 
-    async getAccessAndRefreshToken(
+    async generateAccessToken(
         userId: number,
         username: string
-    ): Promise<{ access_token: string; refresh_token: string }> {
-        const [access_token, refresh_token] = await Promise.all([
-            this.jwtService.signAsync(
-                {
-                    sub: userId,
-                    username
-                },
-                {
-                    secret: process.env.JWT_ACCESS_SECRET,
-                    expiresIn: process.env.JWT_ACCESS_EXPIRE_TIME
-                }
-            ),
-            this.jwtService.signAsync(
-                {
-                    sub: userId,
-                    username
-                },
-                {
-                    secret: process.env.JWT_REFRESH_SECRET,
-                    expiresIn: process.env.JWT_REFRESH_EXPIRE_TIME
-                }
-            )
-        ]);
-
-        return {
-            access_token,
-            refresh_token
-        };
+    ): Promise<string> {
+        return await this.jwtService.signAsync(
+            {
+                sub: userId,
+                username
+            },
+            {
+                secret: process.env.JWT_ACCESS_SECRET,
+                expiresIn: process.env.JWT_ACCESS_EXPIRE_TIME
+            }
+        );
     }
 
     async updateRefreshToken(
@@ -124,7 +139,23 @@ export class AuthService {
         const salt = this.generateSalt();
         const hashedRefreshToken = await this.hashData(refreshToken, salt);
         await this.usersService.update(userId, {
-            refresh_token: hashedRefreshToken
+            refreshToken: String(hashedRefreshToken)
         });
+    }
+
+    async generateRefreshToken(
+        userId: number,
+        username: string
+    ): Promise<string> {
+        return await this.jwtService.signAsync(
+            {
+                sub: userId,
+                username
+            },
+            {
+                secret: process.env.JWT_REFRESH_SECRET,
+                expiresIn: process.env.JWT_REFRESH_EXPIRE_TIME
+            }
+        );
     }
 }

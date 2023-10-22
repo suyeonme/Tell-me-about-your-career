@@ -5,9 +5,6 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
-/**
- * @summary This guard will be used in protecting any protected route.
- */
 @Injectable()
 export class AccessTokenGuard extends AuthGuard('jwt') {
     canActivate(context: ExecutionContext) {
@@ -16,7 +13,6 @@ export class AccessTokenGuard extends AuthGuard('jwt') {
     }
 
     handleRequest(err, user, info) {
-        // Throw an exception based on either "info" or "err" arguments
         if (err || !user) {
             throw err || new UnauthorizedException();
         }

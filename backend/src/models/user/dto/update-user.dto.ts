@@ -23,5 +23,5 @@ export class UpdateUserDto {
 
     @IsString()
     @ValidateIf((_, value) => value !== null)
-    refresh_token: Buffer | null;
+    refreshToken: string;
 }

@@ -12,6 +12,7 @@ import { LocalAuthGuard } from '@auth/guards/local-auth.guard';
 import { AccessTokenGuard } from '@auth/guards/access-token.guard';
 import { SignupUserDto, SigninUserDto } from '@models/user/dto';
 
+// signup, signin시 응답데이터 포맷 (password 가리기)
 // signout시 응답데이터 제거
 // 응답 데이터 일관되도록 포맷
 
@@ -21,8 +22,7 @@ export class AuthController {
 
     @Post('/signup')
     async signup(@Body() signupUserDto: SignupUserDto) {
-        const user = await this.authService.signup(signupUserDto);
-        return user;
+        return this.authService.signup(signupUserDto);
     }
 
     @UseGuards(LocalAuthGuard)
@@ -34,7 +34,7 @@ export class AuthController {
     @UseGuards(AccessTokenGuard)
     @Get('/signout')
     async signout(@Request() req) {
-        return this.authService.signout(req.user.id);
+        return this.authService.signout(req.user['sub']);
     }
 
     @UseGuards(AccessTokenGuard)
