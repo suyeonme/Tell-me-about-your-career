@@ -1,7 +1,7 @@
-import { randomBytes, scrypt as _scrypt } from 'crypto';
-import { promisify } from 'util';
+import * as argon2 from 'argon2';
 import {
     BadRequestException,
+    ForbiddenException,
     Injectable,
     NotFoundException
 } from '@nestjs/common';
@@ -11,8 +11,6 @@ import { UserService } from '@models/user/user.service';
 import { User } from '@models/user/user.entity';
 import { SignupUserDto } from '@models/user/dto/signup-user.dto';
 import { SigninUserDto } from '@models/user/dto';
-
-const scrypt = promisify(_scrypt);
 
 @Injectable()
 export class AuthService {
@@ -27,22 +25,17 @@ export class AuthService {
             accessToken: string;
         }
     > {
-        const isUserExist = await this.usersService.isUserExist(
+        const isEmailExist = await this.usersService.isEmailExist(
             signupUserDto.email
         );
-        if (isUserExist) {
+        if (isEmailExist) {
             throw new BadRequestException('email is use');
         }
 
-        const salt = this.generateSalt();
-        const hash = await this.hashData(signupUserDto.password, salt);
-        const hashedPassword = `${salt}.${hash.toString('hex')}`;
-
         const user = await this.usersService.create({
             ...signupUserDto,
-            password: hashedPassword
+            password: await this.hashData(signupUserDto.password)
         });
-
         const accessToken = await this.generateAccessToken(
             user.id,
             user.username
@@ -51,9 +44,7 @@ export class AuthService {
             user.id,
             user.username
         );
-
         await this.updateRefreshToken(user.id, refreshToken);
-
         return {
             ...user,
             refreshToken,
@@ -69,7 +60,6 @@ export class AuthService {
     > {
         const { email, password } = signinDto;
         const user = await this.validateUser(email, password);
-
         const accessToken = await this.generateAccessToken(
             user.id,
             user.username
@@ -79,7 +69,6 @@ export class AuthService {
             user.username
         );
         await this.updateRefreshToken(user.id, refreshToken);
-
         return {
             ...user,
             refreshToken,
@@ -91,26 +80,19 @@ export class AuthService {
         return this.usersService.update(userId, { refreshToken: null });
     }
 
-    async hashData(data: string, salt: string): Promise<Buffer> {
-        return (await scrypt(data, salt, 32)) as Buffer;
-    }
-
-    generateSalt(): string {
-        return randomBytes(8).toString('hex');
+    hashData(data: string): Promise<string> {
+        return argon2.hash(data);
     }
 
     async validateUser(email: string, password: string): Promise<User> {
         const user = await this.usersService.findOneByEmail(email);
-
         if (!user) {
             throw new NotFoundException('user not found');
         }
 
-        const [salt, storedHash] = user.password.split('.');
-        const hash = await this.hashData(password, salt);
-
-        if (storedHash !== hash.toString('hex')) {
-            throw new BadRequestException('bad password');
+        const passwordMatches = await argon2.verify(user.password, password);
+        if (!passwordMatches) {
+            throw new BadRequestException('Password is incorrect');
         }
 
         return user;
@@ -136,8 +118,7 @@ export class AuthService {
         userId: number,
         refreshToken: string
     ): Promise<void> {
-        const salt = this.generateSalt();
-        const hashedRefreshToken = await this.hashData(refreshToken, salt);
+        const hashedRefreshToken = await this.hashData(refreshToken);
         await this.usersService.update(userId, {
             refreshToken: String(hashedRefreshToken)
         });
@@ -157,5 +138,34 @@ export class AuthService {
                 expiresIn: process.env.JWT_REFRESH_EXPIRE_TIME
             }
         );
+    }
+
+    async refreshTokens(userId: number, refreshToken: string) {
+        const user = await this.usersService.findOneById(userId);
+        if (!user || !user.refreshToken) {
+            throw new ForbiddenException('Access Denied');
+        }
+
+        const refreshTokenMatches = await argon2.verify(
+            user.refreshToken,
+            refreshToken
+        );
+        if (!refreshTokenMatches) {
+            throw new ForbiddenException('Access Denied');
+        }
+
+        const refresh_token = await this.generateRefreshToken(
+            user.id,
+            user.username
+        );
+        const access_token = await this.generateAccessToken(
+            user.id,
+            user.username
+        );
+        await this.updateRefreshToken(user.id, refreshToken);
+        return {
+            refreshToken: refresh_token,
+            accessToken: access_token
+        };
     }
 }

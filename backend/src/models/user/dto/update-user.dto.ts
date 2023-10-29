@@ -4,10 +4,17 @@ import {
     MinLength,
     Matches,
     IsOptional,
-    ValidateIf
+    ValidateIf,
+    IsPhoneNumber,
+    IsEmail
 } from 'class-validator';
 
 export class UpdateUserDto {
+    @IsOptional()
+    @IsEmail()
+    @IsNotEmpty()
+    email?: string;
+
     @IsOptional()
     @IsString()
     @MinLength(8)
@@ -21,7 +28,27 @@ export class UpdateUserDto {
     )
     password?: string;
 
+    @IsOptional()
+    @IsString()
+    @MinLength(3)
+    username?: string;
+
+    @IsOptional()
+    @IsString()
+    @IsNotEmpty()
+    job?: string;
+
+    @IsOptional()
+    @IsPhoneNumber()
+    phone?: string;
+
+    @IsOptional()
     @IsString()
     @ValidateIf((_, value) => value !== null)
-    refreshToken: string;
+    accessToken?: string;
+
+    @IsOptional()
+    @IsString()
+    @ValidateIf((_, value) => value !== null)
+    refreshToken?: string;
 }

@@ -4,19 +4,19 @@ import {
     Post,
     UseGuards,
     Request,
-    Get
+    Get,
+    UseInterceptors,
+    ClassSerializerInterceptor
 } from '@nestjs/common';
 
 import { AuthService } from '@/auth/auth.service';
 import { LocalAuthGuard } from '@auth/guards/local-auth.guard';
 import { AccessTokenGuard } from '@auth/guards/access-token.guard';
 import { SignupUserDto, SigninUserDto } from '@models/user/dto';
-
-// signup, signin시 응답데이터 포맷 (password 가리기)
-// signout시 응답데이터 제거
-// 응답 데이터 일관되도록 포맷
+import { RefreshTokenGuard } from './guards/refresh-token.guard';
 
 @Controller('auth')
+@UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
     constructor(private authService: AuthService) {}
 
@@ -41,5 +41,13 @@ export class AuthController {
     @Get('/profile')
     getProfile(@Request() req) {
         return req.user;
+    }
+
+    @UseGuards(RefreshTokenGuard)
+    @Get('/refresh')
+    refreshTokens(@Request() req) {
+        const userId = req.user['sub'];
+        const refreshToken = req.user['refreshToken'];
+        return this.authService.refreshTokens(userId, refreshToken);
     }
 }
