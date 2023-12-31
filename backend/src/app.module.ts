@@ -3,17 +3,26 @@ import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { RedisModule } from '@nestjs-modules/ioredis';
 
+import { validate } from '../env.validation';
 import { InterviewModule } from './models/interview/interview.module';
 import { UserModule } from './models/user/user.module';
-
 import { User } from './models/user/user.entity';
 import { AuthModule } from './auth/auth.module';
 @Module({
     imports: [
         ConfigModule.forRoot({
             isGlobal: true,
-            envFilePath: `.${process.env.NODE_ENV}.env`
+            envFilePath: `.${process.env.NODE_ENV}.env`,
+            validate
+        }),
+        RedisModule.forRoot({
+            type: 'single',
+            options: {
+                host: process.env.REDIS_HOST,
+                port: Number(process.env.REDIS_PORT)
+            }
         }),
         TypeOrmModule.forRoot({
             type: 'sqlite',
@@ -23,8 +32,8 @@ import { AuthModule } from './auth/auth.module';
         }),
         ThrottlerModule.forRoot([
             {
-                ttl: Number(process.env.TIME_TO_LIVE),
-                limit: Number(process.env.LIMIT_TIME_TO_LIVE)
+                ttl: Number(process.env.TIME_TO_LIVE_MILLISEC),
+                limit: Number(process.env.LIMIT_REQUEST_TIME_TO_LIVE)
             }
         ]),
         InterviewModule,
