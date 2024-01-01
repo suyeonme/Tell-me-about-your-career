@@ -2,8 +2,7 @@ import * as argon2 from 'argon2';
 import {
     BadRequestException,
     ForbiddenException,
-    Injectable,
-    NotFoundException
+    Injectable
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
@@ -58,8 +57,7 @@ export class AuthService {
             accessToken: string;
         }
     > {
-        const { email, password } = signinDto;
-        const user = await this.validateUser(email, password);
+        const user = await this.usersService.findOneByEmail(signinDto.email);
         const accessToken = await this.generateAccessToken(
             user.id,
             user.username
@@ -84,18 +82,8 @@ export class AuthService {
         return argon2.hash(data);
     }
 
-    async validateUser(email: string, password: string): Promise<User> {
-        const user = await this.usersService.findOneByEmail(email);
-        if (!user) {
-            throw new NotFoundException('user not found');
-        }
-
-        const passwordMatches = await argon2.verify(user.password, password);
-        if (!passwordMatches) {
-            throw new BadRequestException('Password is incorrect');
-        }
-
-        return user;
+    async validatePassword(hashedPassword, incomingPassword): Promise<boolean> {
+        return await argon2.verify(hashedPassword, incomingPassword);
     }
 
     async generateAccessToken(
