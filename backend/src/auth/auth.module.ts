@@ -3,15 +3,18 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigService, ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 
+import { MailModule } from '@mail/mail.module';
 import { UserModule } from '../models/user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { LocalStrategy } from './strategies/local.strategy';
 import { AccessTokenStrategy } from './strategies/accessToken.strategy';
 import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
+import { MailService } from '@mail/mail.service';
 
 @Module({
     imports: [
+        MailModule,
         UserModule,
         PassportModule,
         JwtModule.registerAsync({
@@ -26,6 +29,7 @@ import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
     ],
     providers: [
         AuthService,
+        MailService,
         LocalStrategy,
         AccessTokenStrategy,
         RefreshTokenStrategy

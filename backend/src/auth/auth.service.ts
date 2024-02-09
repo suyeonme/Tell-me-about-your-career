@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
+import { MailService } from '@mail/mail.service';
 import { UserService } from '@models/user/user.service';
 import { User } from '@models/user/user.entity';
 import { SignupUserDto } from '@models/user/dto/signup-user.dto';
@@ -15,7 +16,8 @@ import { SigninUserDto } from '@models/user/dto';
 export class AuthService {
     constructor(
         private usersService: UserService,
-        private jwtService: JwtService
+        private jwtService: JwtService,
+        private mailService: MailService
     ) {}
 
     async signup(signupUserDto: SignupUserDto): Promise<
@@ -28,7 +30,7 @@ export class AuthService {
             signupUserDto.email
         );
         if (isEmailExist) {
-            throw new BadRequestException('email is use');
+            throw new BadRequestException('email is in use');
         }
 
         const user = await this.usersService.create({
@@ -44,6 +46,10 @@ export class AuthService {
             user.username
         );
         await this.updateRefreshToken(user.id, refreshToken);
+
+        // Send an email
+        this.mailService.sendSignUpCongratMail(signupUserDto.email);
+
         return {
             ...user,
             refreshToken,

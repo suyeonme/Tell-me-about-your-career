@@ -20,7 +20,7 @@ export class UserService {
 
     async update(userId: number, updateUserDto: UpdateUserDto): Promise<User> {
         const user = await this.findOneById(userId);
-        if (!this.isUserExist(userId)) {
+        if (user === null) {
             throw new HttpException(
                 'User with this id does not exist.',
                 HttpStatus.NOT_FOUND
@@ -32,7 +32,7 @@ export class UserService {
 
     async remove(userId: number): Promise<User | null> {
         const user = await this.findOneById(userId);
-        if (!this.isUserExist(userId)) {
+        if (user === null) {
             throw new HttpException(
                 'User with this id does not exist.',
                 HttpStatus.NOT_FOUND
@@ -59,11 +59,6 @@ export class UserService {
 
     async isEmailExist(email: string): Promise<boolean> {
         const user = await this.findOneByEmail(email);
-        return user ? true : false;
-    }
-
-    async isUserExist(userId: number): Promise<boolean> {
-        const user = await this.findOneById(userId);
         return user ? true : false;
     }
 }
