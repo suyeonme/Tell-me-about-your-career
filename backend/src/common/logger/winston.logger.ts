@@ -7,10 +7,20 @@ const NODE_ENV = process.env.NODE_ENV;
 const LOG_DIRECTORY_PATH = path.join(__dirname, '..', '..', '..', 'logs');
 const DATE_PATTERN = 'YYYY-MM-DD'; // rotating
 const MAX_FILES = 30; // logs to keep
+const LOG_LEVEL = {
+    error: 'error',
+    warn: 'warn',
+    info: 'info',
+    http: 'http',
+    verbose: 'verbose',
+    debug: 'debug',
+    silly: 'silly'
+} as const;
 
 const winstonLogger = WinstonModule.createLogger({
     transports: [
         new winston.transports.Console({
+            level: LOG_LEVEL.error,
             format: winston.format.combine(
                 NODE_ENV === 'production'
                     ? winston.format.simple()
@@ -24,7 +34,7 @@ const winstonLogger = WinstonModule.createLogger({
             )
         }),
         new winstonDaily({
-            level: 'error',
+            level: LOG_LEVEL.error,
             filename: `error-app.log%DATE%`,
             datePattern: DATE_PATTERN,
             dirname: LOG_DIRECTORY_PATH,
@@ -38,7 +48,6 @@ const winstonLogger = WinstonModule.createLogger({
         winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
         winston.format.simple(),
         winston.format.printf((info) => {
-            console.log(info);
             // [YYYY-MM-DD HH:mm:ss] [LEVEL] [PID] [LOGGER_NAME]: [MESSAGE]
             return `[${info.timestamp}] [${info.level}] [${process.pid}] [${info.context}]: ${info.message}`;
         })
