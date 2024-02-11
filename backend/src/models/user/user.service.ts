@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -7,6 +7,8 @@ import { User } from './user.entity';
 
 @Injectable()
 export class UserService {
+    private readonly logger = new Logger(UserService.name);
+
     constructor(
         @InjectRepository(User)
         private userRepository: Repository<User>
@@ -21,6 +23,11 @@ export class UserService {
     async update(userId: number, updateUserDto: UpdateUserDto): Promise<User> {
         const user = await this.findOneById(userId);
         if (user === null) {
+            this.logger.error(
+                `Fail to update a user. User is null: userId=${userId}&updateUserDto=${JSON.stringify(
+                    updateUserDto
+                )}`
+            );
             throw new HttpException(
                 'User with this id does not exist.',
                 HttpStatus.NOT_FOUND
@@ -33,6 +40,9 @@ export class UserService {
     async remove(userId: number): Promise<User | null> {
         const user = await this.findOneById(userId);
         if (user === null) {
+            this.logger.error(
+                `Fail to remove a user. User is null: userId=${userId}}`
+            );
             throw new HttpException(
                 'User with this id does not exist.',
                 HttpStatus.NOT_FOUND
