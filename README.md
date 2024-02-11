@@ -8,6 +8,7 @@
 - [x] Mail Sender
 - [x] HTTP common response(interceptor)
 - [x] Logger
+- [x] Type-safe environment variables
 
 # TODO
 
