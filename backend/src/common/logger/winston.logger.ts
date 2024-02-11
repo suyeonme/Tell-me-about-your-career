@@ -20,7 +20,7 @@ const LOG_LEVEL = {
 const winstonLogger = WinstonModule.createLogger({
     transports: [
         new winston.transports.Console({
-            level: LOG_LEVEL.error,
+            level: LOG_LEVEL.error, // only error in console(terminal)
             format: winston.format.combine(
                 NODE_ENV === 'production'
                     ? winston.format.simple()
@@ -34,7 +34,7 @@ const winstonLogger = WinstonModule.createLogger({
             )
         }),
         new winstonDaily({
-            level: LOG_LEVEL.error,
+            level: LOG_LEVEL.info, // log file
             filename: `error-app.log%DATE%`,
             datePattern: DATE_PATTERN,
             dirname: LOG_DIRECTORY_PATH,
