@@ -173,7 +173,7 @@ export class AuthService {
             user.id,
             user.username
         );
-        await this.updateRefreshToken(user.id, refreshToken);
+        await this.updateRefreshToken(user.id, refresh_token);
         return {
             refreshToken: refresh_token,
             accessToken: access_token

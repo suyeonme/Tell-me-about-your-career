@@ -11,9 +11,9 @@ export class MailService {
         private configService: ConfigService
     ) {}
 
-    public sendSignUpCongratMail(to: string): void {
-        this.mailerService
-            .sendMail({
+    public async sendSignUpCongratMail(to: string): Promise<void> {
+        try {
+            const result = await this.mailerService.sendMail({
                 to,
                 from: this.configService.get<string>('MAIL_USER'),
                 subject:
@@ -21,16 +21,16 @@ export class MailService {
                 text: 'welcome'
                 /**@todo Write HTML body content */
                 // html: '<b>welcome</b>'
-            })
-            .then((result) => {
+            });
+            if (result) {
                 this.logger.log(
                     `Sending congrat email for signup successful: to=${to}`
                 );
-            })
-            .catch((error) => {
-                this.logger.error(
-                    `Failed to send congrat mail for signup: to=${to}&message=${error.message}`
-                );
-            });
+            }
+        } catch (error) {
+            this.logger.error(
+                `Failed to send congrat mail for signup: to=${to}&message=${error.message}`
+            );
+        }
     }
 }
