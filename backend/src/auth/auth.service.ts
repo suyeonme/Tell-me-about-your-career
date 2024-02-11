@@ -2,6 +2,7 @@ import * as argon2 from 'argon2';
 import {
     BadRequestException,
     ForbiddenException,
+    Inject,
     Injectable,
     Logger,
     NotFoundException

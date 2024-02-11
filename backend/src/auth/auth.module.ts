@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigService, ConfigModule } from '@nestjs/config';
+import { ConfigService, ConfigModule, ConfigType } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 
 import { MailService } from '@mail/mail.service';
@@ -15,19 +15,17 @@ import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
 
 @Module({
     imports: [
+        ConfigModule.forFeature(appConfig),
         MailModule,
         UserModule,
         PassportModule,
         JwtModule.registerAsync({
             imports: [ConfigModule.forFeature(appConfig)],
-            inject: [ConfigService],
-            useFactory: (config: ConfigService) => {
-                return {
-                    global: true,
-                    secret: config.get<string>('jwt.secretKey'),
-                    signOptions: { expiresIn: '60s' }
-                };
-            }
+            inject: [appConfig.KEY],
+            useFactory: (config: ConfigType<typeof appConfig>) => ({
+                secret: config.jwt.secretKey,
+                signOptions: { expiresIn: '60s' }
+            })
         })
     ],
     providers: [
@@ -37,7 +35,7 @@ import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
         AccessTokenStrategy,
         RefreshTokenStrategy
     ],
-    controllers: [AuthController],
-    exports: [AuthService]
+    exports: [AuthService],
+    controllers: [AuthController]
 })
 export class AuthModule {}

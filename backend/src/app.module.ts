@@ -30,15 +30,13 @@ import { AuthModule } from './auth/auth.module';
             synchronize: true
         }),
         ThrottlerModule.forRootAsync({
-            imports: [ConfigModule],
-            inject: [ConfigService],
-            useFactory: (config: ConfigService) => ({
+            imports: [ConfigModule.forFeature(appConfig)],
+            inject: [appConfig.KEY],
+            useFactory: (config: ConfigType<typeof appConfig>) => ({
                 throttlers: [
                     {
-                        ttl: config.get<number>('throttle.timeToLiveMilliSec'),
-                        limit: config.get<number>(
-                            'throttle.limitRequestTimeToLive'
-                        )
+                        ttl: config.throttle.timeToLiveMilliSec,
+                        limit: config.throttle.limitRequestTimeToLive
                     }
                 ]
             })

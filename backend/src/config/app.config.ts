@@ -9,7 +9,7 @@ export default registerAs('app', () => ({
         refreshExpireTime: process.env.JWT_REFRESH_EXPIRE_TIME
     },
     throttle: {
-        timeToLiveMilliSec: process.env.TIME_TO_LIVE_MILLISEC,
+        timeToLiveMilliSec: parseInt(process.env.TIME_TO_LIVE_MILLISEC),
         limitRequestTimeToLive: parseInt(process.env.LIMIT_REQUEST_TIME_TO_LIVE)
     },
     nodemailer: {
