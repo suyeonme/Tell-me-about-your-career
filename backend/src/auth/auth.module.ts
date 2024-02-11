@@ -3,6 +3,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigService, ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 
+import { MailService } from '@mail/mail.service';
+import appConfig from '@config/app.config';
 import { MailModule } from '@mail/mail.module';
 import { UserModule } from '../models/user/user.module';
 import { AuthController } from './auth.controller';
@@ -10,7 +12,6 @@ import { AuthService } from './auth.service';
 import { LocalStrategy } from './strategies/local.strategy';
 import { AccessTokenStrategy } from './strategies/accessToken.strategy';
 import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
-import { MailService } from '@mail/mail.service';
 
 @Module({
     imports: [
@@ -18,13 +19,15 @@ import { MailService } from '@mail/mail.service';
         UserModule,
         PassportModule,
         JwtModule.registerAsync({
-            imports: [ConfigModule],
+            imports: [ConfigModule.forFeature(appConfig)],
             inject: [ConfigService],
-            useFactory: (config: ConfigService) => ({
-                global: true,
-                secret: config.get<string>('JWT_SECRET_KEY'),
-                signOptions: { expiresIn: '60s' }
-            })
+            useFactory: (config: ConfigService) => {
+                return {
+                    global: true,
+                    secret: config.get<string>('jwt.secretKey'),
+                    signOptions: { expiresIn: '60s' }
+                };
+            }
         })
     ],
     providers: [

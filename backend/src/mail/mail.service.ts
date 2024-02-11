@@ -1,19 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
-import { ConfigService } from '@nestjs/config';
+import { ConfigType } from '@nestjs/config';
+import appConfig from '@config/app.config';
 
 @Injectable()
 export class MailService {
     constructor(
         private readonly mailerService: MailerService,
-        private configService: ConfigService
+        @Inject(appConfig.KEY)
+        private config: ConfigType<typeof appConfig>
     ) {}
 
     public sendSignUpCongratMail(to: string): void {
         this.mailerService
             .sendMail({
                 to,
-                from: this.configService.get<string>('MAIL_USER'),
+                from: this.config.nodemailer.senderEmail,
                 subject:
                     '[tellmeaboutyourcareer] Congratulations on signing up for Our service!',
                 text: 'welcome'

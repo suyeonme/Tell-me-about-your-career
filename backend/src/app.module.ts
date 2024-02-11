@@ -1,19 +1,27 @@
 import { Module, ValidationPipe } from '@nestjs/common';
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ConfigModule, ConfigService, ConfigType } from '@nestjs/config';
+import {
+    ThrottlerGuard,
+    ThrottlerModule,
+    ThrottlerModuleOptions,
+    ThrottlerOptions
+} from '@nestjs/throttler';
 
+import appConfig from '@config/app.config';
+import dbConfig from '@config/db.config';
 import { InterviewModule } from './models/interview/interview.module';
 import { UserModule } from './models/user/user.module';
-
 import { User } from './models/user/user.entity';
 import { AuthModule } from './auth/auth.module';
+
 @Module({
     imports: [
         ConfigModule.forRoot({
             isGlobal: true,
-            envFilePath: `.${process.env.NODE_ENV}.env`
+            envFilePath: `.${process.env.NODE_ENV}.env`,
+            load: [appConfig, dbConfig]
         }),
         TypeOrmModule.forRoot({
             type: 'sqlite',
@@ -21,12 +29,20 @@ import { AuthModule } from './auth/auth.module';
             entities: [User],
             synchronize: true
         }),
-        ThrottlerModule.forRoot([
-            {
-                ttl: Number(process.env.TIME_TO_LIVE),
-                limit: Number(process.env.LIMIT_TIME_TO_LIVE)
-            }
-        ]),
+        ThrottlerModule.forRootAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: (config: ConfigService) => ({
+                throttlers: [
+                    {
+                        ttl: config.get<number>('throttle.timeToLiveMilliSec'),
+                        limit: config.get<number>(
+                            'throttle.limitRequestTimeToLive'
+                        )
+                    }
+                ]
+            })
+        }),
         InterviewModule,
         UserModule,
         AuthModule

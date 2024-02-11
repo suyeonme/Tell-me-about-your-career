@@ -2,22 +2,28 @@ import * as argon2 from 'argon2';
 import {
     BadRequestException,
     ForbiddenException,
+    Inject,
     Injectable
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigType } from '@nestjs/config';
 
 import { MailService } from '@mail/mail.service';
 import { UserService } from '@models/user/user.service';
 import { User } from '@models/user/user.entity';
 import { SignupUserDto } from '@models/user/dto/signup-user.dto';
 import { SigninUserDto } from '@models/user/dto';
+import appConfig from '@config/app.config';
 
 @Injectable()
 export class AuthService {
     constructor(
         private usersService: UserService,
         private jwtService: JwtService,
-        private mailService: MailService
+        private mailService: MailService,
+
+        @Inject(appConfig.KEY)
+        private config: ConfigType<typeof appConfig>
     ) {}
 
     async signup(signupUserDto: SignupUserDto): Promise<
@@ -102,8 +108,8 @@ export class AuthService {
                 username
             },
             {
-                secret: process.env.JWT_ACCESS_SECRET,
-                expiresIn: process.env.JWT_ACCESS_EXPIRE_TIME
+                secret: this.config.jwt.accessSecret,
+                expiresIn: this.config.jwt.accessExpireTime
             }
         );
     }
@@ -128,8 +134,8 @@ export class AuthService {
                 username
             },
             {
-                secret: process.env.JWT_REFRESH_SECRET,
-                expiresIn: process.env.JWT_REFRESH_EXPIRE_TIME
+                secret: this.config.jwt.refreshSecret,
+                expiresIn: this.config.jwt.refreshExpireTime
             }
         );
     }
