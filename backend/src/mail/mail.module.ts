@@ -8,20 +8,24 @@ import appConfig from '@config/app.config';
     imports: [
         MailerModule.forRootAsync({
             imports: [ConfigModule.forFeature(appConfig)],
-            inject: [appConfig.KEY],
-            useFactory: (config: ConfigType<typeof appConfig>) => ({
-                transport: {
-                    host: config.nodemailer.host, // 이메일을 보낼 SMTP 서버의 주소
-                    port: config.nodemailer.port, // SMTP 서버의 포트 번호
-                    auth: {
-                        user: config.nodemailer.senderEmail, // SMTP 서버 인증을 위한 사용자 이름
-                        pass: config.nodemailer.senderPassword // SMTP 서버 인증을 위한 비밀번호
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => {
+                const config: ConfigType<typeof appConfig> =
+                    configService.get('app');
+                return {
+                    transport: {
+                        host: config.nodemailer.host,
+                        port: config.nodemailer.port,
+                        auth: {
+                            user: config.nodemailer.senderEmail,
+                            pass: config.nodemailer.senderPassword
+                        }
+                    },
+                    defaults: {
+                        from: '"nest-modules" <modules@nestjs.com>'
                     }
-                },
-                defaults: {
-                    from: '"nest-modules" <modules@nestjs.com>'
-                }
-            })
+                };
+            }
         })
     ],
     providers: [MailService],

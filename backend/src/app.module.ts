@@ -30,16 +30,20 @@ import { AuthModule } from './auth/auth.module';
             synchronize: true
         }),
         ThrottlerModule.forRootAsync({
-            imports: [ConfigModule.forFeature(appConfig)],
-            inject: [appConfig.KEY],
-            useFactory: (config: ConfigType<typeof appConfig>) => ({
-                throttlers: [
-                    {
-                        ttl: config.throttle.timeToLiveMilliSec,
-                        limit: config.throttle.limitRequestTimeToLive
-                    }
-                ]
-            })
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => {
+                const config: ConfigType<typeof appConfig> =
+                    configService.get('app');
+                return {
+                    throttlers: [
+                        {
+                            ttl: config.throttle.timeToLiveMilliSec,
+                            limit: config.throttle.limitRequestTimeToLive
+                        }
+                    ]
+                };
+            }
         }),
         InterviewModule,
         UserModule,

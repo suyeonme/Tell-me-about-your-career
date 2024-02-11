@@ -15,17 +15,21 @@ import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
 
 @Module({
     imports: [
-        ConfigModule.forFeature(appConfig),
         MailModule,
         UserModule,
         PassportModule,
         JwtModule.registerAsync({
             imports: [ConfigModule.forFeature(appConfig)],
-            inject: [appConfig.KEY],
-            useFactory: (config: ConfigType<typeof appConfig>) => ({
-                secret: config.jwt.secretKey,
-                signOptions: { expiresIn: '60s' }
-            })
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => {
+                const config: ConfigType<typeof appConfig> =
+                    configService.get('app');
+                return {
+                    global: true,
+                    secret: config.jwt.secretKey,
+                    signOptions: { expiresIn: '60s' }
+                };
+            }
         })
     ],
     providers: [
@@ -35,7 +39,7 @@ import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
         AccessTokenStrategy,
         RefreshTokenStrategy
     ],
-    exports: [AuthService],
-    controllers: [AuthController]
+    controllers: [AuthController],
+    exports: [AuthService]
 })
 export class AuthModule {}
