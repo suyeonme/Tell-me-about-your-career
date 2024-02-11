@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class MailService {
+    private readonly logger = new Logger(MailService.name);
+
     constructor(
         private readonly mailerService: MailerService,
         private configService: ConfigService
@@ -17,13 +19,18 @@ export class MailService {
                 subject:
                     '[tellmeaboutyourcareer] Congratulations on signing up for Our service!',
                 text: 'welcome'
-                // html: '<b>welcome</b>' // HTML body content
+                /**@todo Write HTML body content */
+                // html: '<b>welcome</b>'
             })
             .then((result) => {
-                console.log(result);
+                this.logger.log(
+                    `Sending congrat email for signup successful: to=${to}`
+                );
             })
             .catch((error) => {
-                console.log(error);
+                this.logger.error(
+                    `Failed to send congrat mail for signup: to=${to}&message=${error.message}`
+                );
             });
     }
 }
