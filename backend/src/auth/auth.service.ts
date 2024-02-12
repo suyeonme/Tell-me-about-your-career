@@ -15,7 +15,7 @@ import { UserService } from '@models/user/user.service';
 import { SignupUserDto } from '@models/user/dto/signup-user.dto';
 import { SigninUserDto } from '@models/user/dto';
 import appConfig from '@config/app.config';
-import type { AuthResponse } from './auth.service.types';
+import type { UserResponse, UserTokens } from './auth.service.types';
 
 @Injectable()
 export class AuthService {
@@ -30,7 +30,7 @@ export class AuthService {
         private config: ConfigType<typeof appConfig>
     ) {}
 
-    async signup(signupUserDto: SignupUserDto): Promise<AuthResponse> {
+    async signup(signupUserDto: SignupUserDto): Promise<UserResponse> {
         const isEmailExist = await this.usersService.isEmailExist(
             signupUserDto.email
         );
@@ -69,7 +69,7 @@ export class AuthService {
         };
     }
 
-    async signin(signinDto: SigninUserDto): Promise<AuthResponse> {
+    async signin(signinDto: SigninUserDto): Promise<UserResponse> {
         const user = await this.usersService.findOneByEmail(signinDto.email);
 
         if (!user) {
@@ -151,7 +151,10 @@ export class AuthService {
         );
     }
 
-    async refreshTokens(userId: number, refreshToken: string) {
+    async refreshTokens(
+        userId: number,
+        refreshToken: string
+    ): Promise<UserTokens> {
         const user = await this.usersService.findOneById(userId);
         if (!user || !user.refreshToken) {
             this.logger.error(

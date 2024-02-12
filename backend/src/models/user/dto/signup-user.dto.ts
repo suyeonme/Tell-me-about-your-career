@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
     IsString,
     IsEmail,
@@ -11,6 +12,7 @@ import {
 export class SignupUserDto {
     @IsEmail()
     @IsNotEmpty()
+    @ApiProperty({ description: 'Email' })
     email: string;
 
     @IsString()
@@ -23,14 +25,17 @@ export class SignupUserDto {
                 'Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.'
         }
     )
+    @ApiProperty({ description: 'Password' })
     password: string;
 
     @IsString()
     @MinLength(3)
+    @ApiProperty({ description: 'Username' })
     username: string;
 
     @IsString()
     @IsNotEmpty()
+    @ApiProperty({ description: 'Job' })
     job: string;
 
     @IsPhoneNumber()
@@ -38,5 +43,6 @@ export class SignupUserDto {
 
     @IsString()
     @IsOptional()
+    @ApiProperty({ description: 'Refresh Token' })
     refreshToken?: string;
 }

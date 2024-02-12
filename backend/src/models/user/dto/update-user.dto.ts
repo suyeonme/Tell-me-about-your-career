@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
     IsString,
     IsNotEmpty,
@@ -13,6 +14,7 @@ export class UpdateUserDto {
     @IsOptional()
     @IsEmail()
     @IsNotEmpty()
+    @ApiProperty({ description: 'Email' })
     email?: string;
 
     @IsOptional()
@@ -26,29 +28,35 @@ export class UpdateUserDto {
                 'Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.'
         }
     )
+    @ApiProperty({ description: 'Password' })
     password?: string;
 
     @IsOptional()
     @IsString()
     @MinLength(3)
+    @ApiProperty({ description: 'Username' })
     username?: string;
 
     @IsOptional()
     @IsString()
     @IsNotEmpty()
+    @ApiProperty({ description: 'Job' })
     job?: string;
 
     @IsOptional()
     @IsPhoneNumber()
+    @ApiProperty({ description: 'Phone' })
     phone?: string;
 
     @IsOptional()
     @IsString()
     @ValidateIf((_, value) => value !== null)
+    @ApiProperty({ description: 'Access Token' })
     accessToken?: string;
 
     @IsOptional()
     @IsString()
     @ValidateIf((_, value) => value !== null)
+    @ApiProperty({ description: 'Refresh Token' })
     refreshToken?: string;
 }

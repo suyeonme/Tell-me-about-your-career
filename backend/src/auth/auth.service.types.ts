@@ -1,6 +1,8 @@
 import { User } from '@models/user/user.entity';
 
-export interface AuthResponse extends User {
+export type UserResponse = User & UserTokens;
+
+export interface UserTokens {
     refreshToken: string;
     accessToken: string;
 }

@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
     IsString,
     IsEmail,
@@ -9,6 +10,7 @@ import {
 export class SigninUserDto {
     @IsEmail()
     @IsNotEmpty()
+    @ApiProperty({ description: 'Email' })
     email: string;
 
     @IsString()
@@ -21,5 +23,7 @@ export class SigninUserDto {
                 'Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.'
         }
     )
+    @IsNotEmpty()
+    @ApiProperty({ description: 'Password' })
     password: string;
 }
