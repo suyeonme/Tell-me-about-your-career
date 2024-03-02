@@ -45,6 +45,7 @@ export class AuthService {
             ...signupUserDto,
             password: await this.hashData(signupUserDto.password)
         });
+
         const accessToken = await this.generateAccessToken(
             user.id,
             user.username
@@ -55,15 +56,17 @@ export class AuthService {
         );
         await this.updateRefreshToken(user.id, refreshToken);
 
-        // Send an email
         this.mailService.sendSignUpCongratMail(signupUserDto.email);
 
         this.logger.log(
             `Signup successful: email=${signupUserDto.email}&username=${signupUserDto.username}`
         );
 
+        const cloned = { ...user };
+        delete cloned.password;
+
         return {
-            ...user,
+            ...cloned,
             refreshToken,
             accessToken
         };

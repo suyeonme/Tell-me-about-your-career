@@ -16,8 +16,7 @@ export class UserService {
 
     async create(signupUserDto: SignupUserDto): Promise<User> {
         const user = this.userRepository.create(signupUserDto);
-        this.userRepository.save(user);
-        return user;
+        return this.userRepository.save(user);
     }
 
     async update(userId: number, updateUserDto: UpdateUserDto): Promise<User> {
@@ -33,8 +32,7 @@ export class UserService {
                 HttpStatus.NOT_FOUND
             );
         }
-        this.userRepository.save({ ...user, ...updateUserDto });
-        return user;
+        return this.userRepository.save({ ...user, ...updateUserDto });
     }
 
     async remove(userId: number): Promise<User | null> {
@@ -48,8 +46,7 @@ export class UserService {
                 HttpStatus.NOT_FOUND
             );
         }
-        this.userRepository.remove(user);
-        return user;
+        return this.userRepository.remove(user);
     }
 
     async findAll(): Promise<Array<User>> {

@@ -1,7 +1,6 @@
 import { PrimaryGeneratedColumn, Column, Entity } from 'typeorm';
 import { Exclude } from 'class-transformer';
-
-import { Role } from './user.type';
+import { Role } from '@common/enums/role.enum';
 
 @Entity()
 export class User {
@@ -25,7 +24,7 @@ export class User {
     phone: string;
 
     @Column({
-        default: Role.User
+        default: Role.USER
     })
     role: Role;
 

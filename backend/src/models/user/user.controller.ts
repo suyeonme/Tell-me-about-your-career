@@ -8,13 +8,15 @@ import {
     HttpStatus,
     Param,
     Patch,
-    Post,
     UseGuards,
     UseInterceptors
 } from '@nestjs/common';
+import { AccessTokenGuard } from '@auth/guards/access-token.guard';
+import { Roles } from '@common/decorators/role.decorator';
+import { Role } from '@common/enums/role.enum';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto';
-import { AccessTokenGuard } from '@auth/guards/access-token.guard';
+import { RolesGuard } from '@auth/guards/roles.guard';
 
 @Controller('user')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -51,7 +53,8 @@ export class UserController {
     }
 
     @Delete(':id')
-    @UseGuards(AccessTokenGuard)
+    @Roles(Role.ADMIN)
+    @UseGuards(AccessTokenGuard, RolesGuard)
     remove(@Param('id') id: string) {
         return this.userService.remove(Number(id));
     }

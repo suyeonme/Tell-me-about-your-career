@@ -7,13 +7,15 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
+
+    app.useGlobalInterceptors(new CommonResponseInterceptor());
     app.useGlobalPipes(
         new ValidationPipe({
             whitelist: true,
             forbidUnknownValues: true
         })
     );
-    app.useGlobalInterceptors(new CommonResponseInterceptor());
+
     app.useLogger(winstonLogger);
     await app.listen(3300);
 }

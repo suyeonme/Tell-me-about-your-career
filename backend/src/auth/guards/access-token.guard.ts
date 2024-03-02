@@ -7,14 +7,18 @@ import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
 export class AccessTokenGuard extends AuthGuard('jwt') {
+    // 커스텀 인증 로직
     canActivate(context: ExecutionContext) {
-        // Custom authentication logic
         return super.canActivate(context);
     }
 
-    handleRequest(err, user, info) {
-        if (err || !user) {
-            throw err || new UnauthorizedException();
+    // AuthGuard로부터 인증 과정의 결과를 처리
+    handleRequest(error: Error, user, info) {
+        if (error) {
+            throw new Error(error.message);
+        }
+        if (!user) {
+            new UnauthorizedException();
         }
         return user;
     }
