@@ -11,9 +11,10 @@ import {
 
 import appConfig from '@config/app.config';
 import dbConfig from '@config/db.config';
-import { InterviewModule } from './models/interview/interview.module';
+import { InterviewModule } from './models/job-interview/job-interview.module';
 import { UserModule } from './models/user/user.module';
 import { User } from './models/user/user.entity';
+import { JobInterview } from './models/job-interview/entity/job-interview.entity';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
@@ -26,7 +27,7 @@ import { AuthModule } from './auth/auth.module';
         TypeOrmModule.forRoot({
             type: 'sqlite',
             database: `${process.env.NODE_ENV}.db`,
-            entities: [User],
+            entities: [User, JobInterview],
             synchronize: true
         }),
         ThrottlerModule.forRootAsync({

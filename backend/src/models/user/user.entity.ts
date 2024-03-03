@@ -1,6 +1,7 @@
-import { PrimaryGeneratedColumn, Column, Entity } from 'typeorm';
+import { PrimaryGeneratedColumn, Column, Entity, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Role } from '@common/enums/role.enum';
+import { JobInterview } from '@models/job-interview/entity/job-interview.entity';
 
 @Entity()
 export class User {
@@ -30,4 +31,7 @@ export class User {
 
     @Column({ nullable: true })
     refreshToken: string | null;
+
+    @OneToMany(() => JobInterview, (jobInterview) => jobInterview.user)
+    jobInterviews: Array<JobInterview>;
 }
