@@ -1,10 +1,9 @@
 # compiled output
-/frontend/dist
-/frontend/node_modules/
 
-/backend/dist
-/backend/node_modules/
-/backend/development.db
+/packages/*/node_modules
+/packages/*/dist
+
+/packages/backend/development.db
 
 /.pnp
 .pnp.js

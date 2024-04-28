@@ -1,0 +1,13 @@
+{
+  "name": "tell-me-about-your-career",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "backend-dev": "pnpm -F @tellme/backend start:dev",
+    "dev": "pnpm -r dev"
+  },
+  "keywords": [],
+  "author": "Suyeon Kang",
+  "license": "ISC"
+}
