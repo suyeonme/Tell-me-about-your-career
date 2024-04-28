@@ -1,7 +1,7 @@
 {
   "name": "tell-me-about-your-career",
   "version": "1.0.0",
-  "description": "",
+  "description": "A platform for exploring various professions and uncovering the values they convey.",
   "main": "index.js",
   "scripts": {
     "backend-dev": "pnpm -F @tellme/backend start:dev",
@@ -9,5 +9,10 @@
   },
   "keywords": [],
   "author": "Suyeon Kang",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@rushstack/eslint-config": "^3.6.9",
+    "eslint": "^8.0.1",
+    "typescript": "^5.0.0"
+  }
 }
