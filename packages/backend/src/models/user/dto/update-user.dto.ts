@@ -50,5 +50,5 @@ export class UpdateUserDto {
     @IsOptional()
     @IsString()
     @ValidateIf((_, value) => value !== null)
-    refreshToken?: string;
+    refreshToken?: string | null;
 }

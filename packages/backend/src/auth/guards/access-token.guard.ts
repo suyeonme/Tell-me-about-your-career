@@ -13,7 +13,11 @@ export class AccessTokenGuard extends AuthGuard('jwt') {
     }
 
     // AuthGuard로부터 인증 과정의 결과를 처리
-    handleRequest<T>(error: Error | null, user: T | false, info) {
+    handleRequest<T>(
+        error: Error | null,
+        user: T | false,
+        info: { message?: string }
+    ) {
         if (error) {
             throw new Error(error.message);
         } else if (!user) {

@@ -108,7 +108,10 @@ export class AuthService {
         return argon2.hash(data);
     }
 
-    async validatePassword(hashedPassword, incomingPassword): Promise<boolean> {
+    async validatePassword(
+        hashedPassword: string,
+        incomingPassword: string
+    ): Promise<boolean> {
         return await argon2.verify(hashedPassword, incomingPassword);
     }
 

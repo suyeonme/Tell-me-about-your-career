@@ -3,10 +3,10 @@ import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService, ConfigType } from '@nestjs/config';
 import {
+    Resolvable,
     ThrottlerGuard,
     ThrottlerModule,
-    ThrottlerModuleOptions,
-    ThrottlerOptions
+    ThrottlerModuleOptions
 } from '@nestjs/throttler';
 
 import appConfig from '@config/app.config';
@@ -32,14 +32,21 @@ import { AuthModule } from './auth/auth.module';
         ThrottlerModule.forRootAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
-            useFactory: (configService: ConfigService) => {
-                const config: ConfigType<typeof appConfig> =
+            useFactory: (
+                configService: ConfigService
+            ): Promise<ThrottlerModuleOptions> | ThrottlerModuleOptions => {
+                const config: ConfigType<typeof appConfig> | undefined =
                     configService.get('app');
+                if (!config) {
+                    throw new Error('{app} configuration is not defined');
+                }
                 return {
                     throttlers: [
                         {
-                            ttl: config.throttle.timeToLiveMilliSec,
-                            limit: config.throttle.limitRequestTimeToLive
+                            ttl: config.throttle
+                                .timeToLiveMilliSec as Resolvable<number>,
+                            limit: config.throttle
+                                .limitRequestTimeToLive as Resolvable<number>
                         }
                     ]
                 };

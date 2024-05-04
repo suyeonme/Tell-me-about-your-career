@@ -28,6 +28,5 @@ export class User {
     })
     role: Role;
 
-    @Column({ nullable: true })
-    refreshToken: string | null;
+    @Column({ type: 'varchar', nullable: true }) refreshToken: string | null;
 }

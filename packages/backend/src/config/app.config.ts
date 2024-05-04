@@ -9,12 +9,16 @@ export default registerAs('app', () => ({
         refreshExpireTime: process.env.JWT_REFRESH_EXPIRE_TIME
     },
     throttle: {
-        timeToLiveMilliSec: parseInt(process.env.TIME_TO_LIVE_MILLISEC),
-        limitRequestTimeToLive: parseInt(process.env.LIMIT_REQUEST_TIME_TO_LIVE)
+        timeToLiveMilliSec: process.env.TIME_TO_LIVE_MILLISEC
+            ? parseInt(process.env.TIME_TO_LIVE_MILLISEC)
+            : '',
+        limitRequestTimeToLive: process.env.LIMIT_REQUEST_TIME_TO_LIVE
+            ? parseInt(process.env.LIMIT_REQUEST_TIME_TO_LIVE)
+            : ''
     },
     nodemailer: {
         host: process.env.MAIL_HOST,
-        port: parseInt(process.env.MAIL_PORT),
+        port: process.env.MAIL_PORT ? parseInt(process.env.MAIL_PORT) : '',
         senderEmail: process.env.MAIL_USER,
         senderPassword: process.env.MAIL_PASSWORD
     }

@@ -9,6 +9,7 @@ import {
     ClassSerializerInterceptor
 } from '@nestjs/common';
 
+import type { Request as Req } from 'express';
 import { AuthService } from '@/auth/auth.service';
 import { LocalAuthGuard } from '@auth/guards/local-auth.guard';
 import { AccessTokenGuard } from '@auth/guards/access-token.guard';
@@ -27,25 +28,28 @@ export class AuthController {
 
     @UseGuards(LocalAuthGuard)
     @Post('/signin')
-    async login(@Request() req, @Body() signinUserDto: SigninUserDto) {
+    async login(@Request() req: Req, @Body() signinUserDto: SigninUserDto) {
         return this.authService.signin(signinUserDto);
     }
 
     @UseGuards(AccessTokenGuard)
     @Get('/signout')
-    async signout(@Request() req) {
-        return this.authService.signout(req.user['sub']);
+    async signout(@Request() req: Req) {
+        if (req.user) {
+            return this.authService.signout(req.user['sub']);
+        }
     }
 
     @UseGuards(AccessTokenGuard)
     @Get('/profile')
-    getProfile(@Request() req) {
+    getProfile(@Request() req: Req) {
         return req.user;
     }
 
     @UseGuards(RefreshTokenGuard)
     @Get('/refresh')
-    refreshTokens(@Request() req) {
+    refreshTokens(@Request() req: Req) {
+        if (!req.user) return;
         const userId = req.user['sub'];
         const refreshToken = req.user['refreshToken'];
         return this.authService.refreshTokens(userId, refreshToken);

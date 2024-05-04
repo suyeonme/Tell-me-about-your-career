@@ -1,7 +1,13 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import type { Request } from 'express';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+
+interface JwtPayload {
+    id: string;
+    email: string;
+    refreshToken: string;
+}
 
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
@@ -16,11 +22,12 @@ export class RefreshTokenStrategy extends PassportStrategy(
         });
     }
 
-    validate(req: Request, payload) {
-        const refreshToken = req
-            .get('Authorization')
-            .replace('Bearer', '')
-            .trim();
+    validate(req: Request, payload: JwtPayload) {
+        const authorizationHeader = req.get('Authorization');
+        if (!authorizationHeader) {
+            throw new UnauthorizedException('Missing authorization header');
+        }
+        const refreshToken = authorizationHeader.replace('Bearer', '').trim();
         return { ...payload, refreshToken };
     }
 }

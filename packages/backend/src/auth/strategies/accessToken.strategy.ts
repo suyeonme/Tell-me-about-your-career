@@ -7,7 +7,13 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 @Injectable()
 export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
     constructor(private readonly configService: ConfigService) {
-        const config: ConfigType<typeof appConfig> = configService.get('app');
+        const config: ConfigType<typeof appConfig> | undefined =
+            configService.get('app');
+
+        if (!config) {
+            throw new Error('{app} configuration is not defined');
+        }
+
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             secretOrKey: config.jwt.secretKey
