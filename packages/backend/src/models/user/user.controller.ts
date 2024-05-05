@@ -26,9 +26,9 @@ export class UserController {
     @Get()
     async findAll() {
         const users = await this.userService.findAll();
-        const result = [...users];
-        result.forEach((user) => {
-            delete user.refreshToken;
+        const result = users.map((user) => {
+            const { refreshToken, ...rest } = user;
+            return rest;
         });
         return result;
     }

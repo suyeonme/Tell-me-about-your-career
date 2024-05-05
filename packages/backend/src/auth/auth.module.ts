@@ -22,8 +22,11 @@ import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
             imports: [ConfigModule.forFeature(appConfig)],
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => {
-                const config: ConfigType<typeof appConfig> =
+                const config: ConfigType<typeof appConfig> | undefined =
                     configService.get('app');
+                if (!config) {
+                    throw new Error('{app} configuration is not defined');
+                }
                 return {
                     global: true,
                     secret: config.jwt.secretKey,

@@ -30,9 +30,11 @@ export class MailService {
                 );
             }
         } catch (error) {
-            this.logger.error(
-                `Failed to send congrat mail for signup: to=${to}&message=${error.message}`
-            );
+            if (error instanceof Error) {
+                this.logger.error(
+                    `Failed to send congrat mail for signup: to=${to}&message=${error.message}`
+                );
+            }
         }
     }
 }
