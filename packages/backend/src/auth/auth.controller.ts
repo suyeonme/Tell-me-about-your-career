@@ -35,9 +35,8 @@ export class AuthController {
     @UseGuards(AccessTokenGuard)
     @Get('/signout')
     async signout(@Request() req: Req) {
-        if (req.user) {
-            return this.authService.signout(req.user['sub']);
-        }
+        const user = req.user as { sub: number };
+        return this.authService.signout(user.sub);
     }
 
     @UseGuards(AccessTokenGuard)
@@ -49,9 +48,9 @@ export class AuthController {
     @UseGuards(RefreshTokenGuard)
     @Get('/refresh')
     refreshTokens(@Request() req: Req) {
-        if (!req.user) return;
-        const userId = req.user['sub'];
-        const refreshToken = req.user['refreshToken'];
+        const user = req.user as { sub: number; refreshToken: string };
+        const userId = user['sub'];
+        const refreshToken = user['refreshToken'];
         return this.authService.refreshTokens(userId, refreshToken);
     }
 }
