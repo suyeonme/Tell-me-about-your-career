@@ -12,11 +12,11 @@ import { plainToInstance } from 'class-transformer';
  * @description Accept only class (typescript)
  */
 interface ClassConstructor {
-    new (...args: Array<unknown>): {};
+    new (...args: Array<unknown>): unknown;
 }
 
 export class SerializeInterceptor implements NestInterceptor {
-    constructor(private dto: unknown) {}
+    constructor(private dto: ClassConstructor) {}
 
     intercept(
         _context: ExecutionContext, // before request
