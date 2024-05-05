@@ -1,10 +1,10 @@
 import {
     UseInterceptors,
-    NestInterceptor,
-    ExecutionContext,
-    CallHandler
+    type NestInterceptor,
+    type ExecutionContext,
+    type CallHandler
 } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { plainToInstance } from 'class-transformer';
 
@@ -12,26 +12,18 @@ import { plainToInstance } from 'class-transformer';
  * @description Accept only class (typescript)
  */
 interface ClassConstructor {
-    new (...args: any[]): {};
-}
-
-/**
- * @Decorator
- * @description Convert entity to a plain javascript object
- */
-export function Serialize(dto: ClassConstructor) {
-    return UseInterceptors(new SerializeInterceptor(dto));
+    new (...args: Array<unknown>): {};
 }
 
 export class SerializeInterceptor implements NestInterceptor {
-    constructor(private dto: any) {}
+    constructor(private dto: unknown) {}
 
     intercept(
         _context: ExecutionContext, // before request
         handler: CallHandler // before response
-    ): Observable<any> | Promise<Observable<any>> {
+    ): Observable<unknown> | Promise<Observable<unknown>> {
         return handler.handle().pipe(
-            map((data: any) => {
+            map((data: unknown) => {
                 // convert entity to a plain javascript object
                 return plainToInstance(this.dto, data, {
                     excludeExtraneousValues: true // exclude any properties that are not defined in the DTO
@@ -40,3 +32,11 @@ export class SerializeInterceptor implements NestInterceptor {
         );
     }
 }
+
+/**
+ * @Decorator
+ * @description Convert entity to a plain javascript object
+ */
+export const Serialize = (dto: ClassConstructor) => {
+    return UseInterceptors(new SerializeInterceptor(dto));
+};

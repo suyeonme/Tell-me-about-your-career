@@ -25,6 +25,7 @@
     "alwaysStrict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "noImplicitReturns": true,
     "paths": {
       "@*": ["src/*"],
       "@interceptors/*": ["src/common/interceptors/*"],
