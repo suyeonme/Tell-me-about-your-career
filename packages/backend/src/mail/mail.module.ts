@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { ConfigModule, ConfigService, ConfigType } from '@nestjs/config';
+import { ConfigModule, ConfigService, type ConfigType } from '@nestjs/config';
 import { MailService } from './mail.service';
 import appConfig from '@config/app.config';
 
@@ -10,8 +10,7 @@ import appConfig from '@config/app.config';
             imports: [ConfigModule.forFeature(appConfig)],
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => {
-                const config: ConfigType<typeof appConfig> | undefined =
-                    configService.get('app');
+                const config: ConfigType<typeof appConfig> | undefined = configService.get('app');
 
                 if (!config) {
                     throw new Error('{app} configuration is not defined');
@@ -23,17 +22,17 @@ import appConfig from '@config/app.config';
                         port: config.nodemailer.port,
                         auth: {
                             user: config.nodemailer.senderEmail,
-                            pass: config.nodemailer.senderPassword
-                        }
+                            pass: config.nodemailer.senderPassword,
+                        },
                     },
                     defaults: {
-                        from: '"nest-modules" <modules@nestjs.com>'
-                    }
+                        from: '"nest-modules" <modules@nestjs.com>',
+                    },
                 };
-            }
-        })
+            },
+        }),
     ],
     providers: [MailService],
-    exports: [MailService]
+    exports: [MailService],
 })
 export class MailModule {}

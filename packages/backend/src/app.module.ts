@@ -1,12 +1,12 @@
 import { Module, ValidationPipe } from '@nestjs/common';
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService, ConfigType } from '@nestjs/config';
+import { ConfigModule, ConfigService, type ConfigType } from '@nestjs/config';
 import {
-    Resolvable,
     ThrottlerGuard,
     ThrottlerModule,
-    ThrottlerModuleOptions
+    type Resolvable,
+    type ThrottlerModuleOptions,
 } from '@nestjs/throttler';
 
 import appConfig from '@config/app.config';
@@ -21,51 +21,48 @@ import { AuthModule } from './auth/auth.module';
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: `.${process.env.NODE_ENV}.env`,
-            load: [appConfig, dbConfig]
+            load: [appConfig, dbConfig],
         }),
         TypeOrmModule.forRoot({
             type: 'sqlite',
             database: `${process.env.NODE_ENV}.db`,
             entities: [User],
-            synchronize: true
+            synchronize: true,
         }),
         ThrottlerModule.forRootAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
             useFactory: (
-                configService: ConfigService
+                configService: ConfigService,
             ): Promise<ThrottlerModuleOptions> | ThrottlerModuleOptions => {
-                const config: ConfigType<typeof appConfig> | undefined =
-                    configService.get('app');
+                const config: ConfigType<typeof appConfig> | undefined = configService.get('app');
                 if (!config) {
                     throw new Error('{app} configuration is not defined');
                 }
                 return {
                     throttlers: [
                         {
-                            ttl: config.throttle
-                                .timeToLiveMilliSec as Resolvable<number>,
-                            limit: config.throttle
-                                .limitRequestTimeToLive as Resolvable<number>
-                        }
-                    ]
+                            ttl: config.throttle.timeToLiveMilliSec as Resolvable<number>,
+                            limit: config.throttle.limitRequestTimeToLive as Resolvable<number>,
+                        },
+                    ],
                 };
-            }
+            },
         }),
         InterviewModule,
         UserModule,
-        AuthModule
+        AuthModule,
     ],
     controllers: [],
     providers: [
         {
             provide: APP_PIPE,
-            useClass: ValidationPipe
+            useClass: ValidationPipe,
         },
         {
             provide: APP_GUARD,
-            useClass: ThrottlerGuard
-        }
-    ]
+            useClass: ThrottlerGuard,
+        },
+    ],
 })
 export class AppModule {}

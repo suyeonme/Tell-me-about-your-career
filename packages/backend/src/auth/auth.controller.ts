@@ -6,10 +6,10 @@ import {
     Request,
     Get,
     UseInterceptors,
-    ClassSerializerInterceptor
+    ClassSerializerInterceptor,
 } from '@nestjs/common';
 
-import type { Request as Req } from 'express';
+import { Request as Req } from 'express';
 import { AuthService } from '@/auth/auth.service';
 import { LocalAuthGuard } from '@auth/guards/local-auth.guard';
 import { AccessTokenGuard } from '@auth/guards/access-token.guard';

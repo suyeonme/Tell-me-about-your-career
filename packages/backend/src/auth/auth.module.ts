@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigService, ConfigModule, ConfigType } from '@nestjs/config';
+import { ConfigService, ConfigModule, type ConfigType } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 
 import { MailService } from '@mail/mail.service';
@@ -22,27 +22,20 @@ import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
             imports: [ConfigModule.forFeature(appConfig)],
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => {
-                const config: ConfigType<typeof appConfig> | undefined =
-                    configService.get('app');
+                const config: ConfigType<typeof appConfig> | undefined = configService.get('app');
                 if (!config) {
                     throw new Error('{app} configuration is not defined');
                 }
                 return {
                     global: true,
                     secret: config.jwt.secretKey,
-                    signOptions: { expiresIn: '60s' }
+                    signOptions: { expiresIn: '60s' },
                 };
-            }
-        })
+            },
+        }),
     ],
-    providers: [
-        AuthService,
-        MailService,
-        LocalStrategy,
-        AccessTokenStrategy,
-        RefreshTokenStrategy
-    ],
+    providers: [AuthService, MailService, LocalStrategy, AccessTokenStrategy, RefreshTokenStrategy],
     controllers: [AuthController],
-    exports: [AuthService]
+    exports: [AuthService],
 })
 export class AuthModule {}

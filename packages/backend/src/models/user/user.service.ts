@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { SignupUserDto, UpdateUserDto } from './dto';
+import type { SignupUserDto, UpdateUserDto } from './dto';
 import { User } from './user.entity';
 
 @Injectable()
@@ -42,7 +42,7 @@ export class UserService {
     }
 
     // async findAll(): Promise<Array<User>> {
-    async findAll(): Promise<User[]> {
+    async findAll(): Promise<Array<User>> {
         const users = await this.userRepository.find();
         return users;
     }

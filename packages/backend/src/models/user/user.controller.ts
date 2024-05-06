@@ -9,7 +9,7 @@ import {
     Param,
     Patch,
     UseGuards,
-    UseInterceptors
+    UseInterceptors,
 } from '@nestjs/common';
 import { AccessTokenGuard } from '@auth/guards/access-token.guard';
 import { Roles } from '@common/decorators/role.decorator';
@@ -27,7 +27,7 @@ export class UserController {
     async findAll() {
         const users = await this.userService.findAll();
         const result = users.map((user) => {
-            const { refreshToken, ...rest } = user;
+            const { refreshToken, ...rest } = user; // eslint-disable-line
             return rest;
         });
         return result;
@@ -38,10 +38,7 @@ export class UserController {
     async findOneById(@Param('id') id: string) {
         const user = await this.userService.findOneById(Number(id));
         if (!user) {
-            throw new HttpException(
-                'User with this id does not exist.',
-                HttpStatus.NOT_FOUND
-            );
+            throw new HttpException('User with this id does not exist.', HttpStatus.NOT_FOUND);
         }
         return user;
     }

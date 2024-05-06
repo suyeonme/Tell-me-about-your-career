@@ -1,14 +1,13 @@
-import appConfig from '@config/app.config';
+import type appConfig from '@config/app.config';
 import { Injectable } from '@nestjs/common';
-import { ConfigService, ConfigType } from '@nestjs/config';
+import { ConfigService, type ConfigType } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 @Injectable()
 export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
     constructor(readonly configService: ConfigService) {
-        const config: ConfigType<typeof appConfig> | undefined =
-            configService.get('app');
+        const config: ConfigType<typeof appConfig> | undefined = configService.get('app');
 
         if (!config) {
             throw new Error('{app} configuration is not defined');
@@ -16,7 +15,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
 
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-            secretOrKey: config.jwt.secretKey
+            secretOrKey: config.jwt.secretKey,
         });
     }
 

@@ -5,18 +5,18 @@ import {
     Inject,
     Injectable,
     Logger,
-    NotFoundException
+    NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
 
 import { MailService } from '@mail/mail.service';
 import { UserService } from '@models/user/user.service';
-import { SignupUserDto } from '@models/user/dto/signup-user.dto';
-import { SigninUserDto } from '@models/user/dto';
+import type { SignupUserDto } from '@models/user/dto/signup-user.dto';
+import type { SigninUserDto } from '@models/user/dto';
 import appConfig from '@config/app.config';
 import type { AuthResponse } from './auth.service.types';
-import { User } from '@models/user/user.entity';
+import type { User } from '@models/user/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -28,45 +28,37 @@ export class AuthService {
         private mailService: MailService,
 
         @Inject(appConfig.KEY)
-        private config: ConfigType<typeof appConfig>
+        private config: ConfigType<typeof appConfig>,
     ) {}
 
     async signup(signupUserDto: SignupUserDto): Promise<AuthResponse> {
-        const isEmailExist = await this.usersService.isEmailExist(
-            signupUserDto.email
-        );
+        const isEmailExist = await this.usersService.isEmailExist(signupUserDto.email);
         if (isEmailExist) {
             this.logger.error(
-                `Failed to signup. Email is in use: email=${signupUserDto.email}&username=${signupUserDto.username}`
+                `Failed to signup. Email is in use: email=${signupUserDto.email}&username=${signupUserDto.username}`,
             );
             throw new BadRequestException('Email is in use.');
         }
 
         const user = await this.usersService.create({
             ...signupUserDto,
-            password: await this.hashData(signupUserDto.password)
+            password: await this.hashData(signupUserDto.password),
         });
 
-        const accessToken = await this.generateAccessToken(
-            user.id,
-            user.username
-        );
-        const refreshToken = await this.generateRefreshToken(
-            user.id,
-            user.username
-        );
+        const accessToken = await this.generateAccessToken(user.id, user.username);
+        const refreshToken = await this.generateRefreshToken(user.id, user.username);
         await this.updateRefreshToken(user.id, refreshToken);
 
         this.mailService.sendSignUpCongratMail(signupUserDto.email);
 
         this.logger.log(
-            `Signup successful: email=${signupUserDto.email}&username=${signupUserDto.username}`
+            `Signup successful: email=${signupUserDto.email}&username=${signupUserDto.username}`,
         );
 
         return {
             ...this.removePasswordFromUser({ ...user }),
             refreshToken,
-            accessToken
+            accessToken,
         };
     }
 
@@ -74,27 +66,19 @@ export class AuthService {
         const user = await this.usersService.findOneByEmail(signinDto.email);
 
         if (!user) {
-            this.logger.error(
-                `Failed to signin. User is not found: email=${signinDto.email}`
-            );
+            this.logger.error(`Failed to signin. User is not found: email=${signinDto.email}`);
             throw new NotFoundException(`${signinDto.email} is not found.`);
         }
 
-        const accessToken = await this.generateAccessToken(
-            user.id,
-            user.username
-        );
-        const refreshToken = await this.generateRefreshToken(
-            user.id,
-            user.username
-        );
+        const accessToken = await this.generateAccessToken(user.id, user.username);
+        const refreshToken = await this.generateRefreshToken(user.id, user.username);
         await this.updateRefreshToken(user.id, refreshToken);
         this.logger.log(`Signin successful: email=${signinDto.email}`);
 
         return {
             ...this.removePasswordFromUser({ ...user }),
             refreshToken,
-            accessToken
+            accessToken,
         };
     }
 
@@ -115,52 +99,40 @@ export class AuthService {
         return argon2.hash(data);
     }
 
-    async validatePassword(
-        hashedPassword: string,
-        incomingPassword: string
-    ): Promise<boolean> {
+    async validatePassword(hashedPassword: string, incomingPassword: string): Promise<boolean> {
         return await argon2.verify(hashedPassword, incomingPassword);
     }
 
-    async generateAccessToken(
-        userId: number,
-        username: string
-    ): Promise<string> {
+    async generateAccessToken(userId: number, username: string): Promise<string> {
         return await this.jwtService.signAsync(
             {
                 sub: userId,
-                username
+                username,
             },
             {
                 secret: this.config.jwt.accessSecret,
-                expiresIn: this.config.jwt.accessExpireTime
-            }
+                expiresIn: this.config.jwt.accessExpireTime,
+            },
         );
     }
 
-    async updateRefreshToken(
-        userId: number,
-        refreshToken: string
-    ): Promise<void> {
+    async updateRefreshToken(userId: number, refreshToken: string): Promise<void> {
         const hashedRefreshToken = await this.hashData(refreshToken);
         await this.usersService.update(userId, {
-            refreshToken: String(hashedRefreshToken)
+            refreshToken: String(hashedRefreshToken),
         });
     }
 
-    async generateRefreshToken(
-        userId: number,
-        username: string
-    ): Promise<string> {
+    async generateRefreshToken(userId: number, username: string): Promise<string> {
         return await this.jwtService.signAsync(
             {
                 sub: userId,
-                username
+                username,
             },
             {
                 secret: this.config.jwt.refreshSecret,
-                expiresIn: this.config.jwt.refreshExpireTime
-            }
+                expiresIn: this.config.jwt.refreshExpireTime,
+            },
         );
     }
 
@@ -168,34 +140,25 @@ export class AuthService {
         const user = await this.usersService.findOneById(userId);
         if (!user || !user.refreshToken) {
             this.logger.error(
-                `Fail to refresh token. Token is not found.: userId=${userId}&refreshToken=${refreshToken}`
+                `Fail to refresh token. Token is not found.: userId=${userId}&refreshToken=${refreshToken}`,
             );
             throw new ForbiddenException('Access Denied');
         }
 
-        const refreshTokenMatches = await argon2.verify(
-            user.refreshToken,
-            refreshToken
-        );
+        const refreshTokenMatches = await argon2.verify(user.refreshToken, refreshToken);
         if (!refreshTokenMatches) {
             this.logger.error(
-                `Fail to refresh token. Token doesn't match: userRefreshToken=${user.refreshToken}&refreshToken=${refreshToken}`
+                `Fail to refresh token. Token doesn't match: userRefreshToken=${user.refreshToken}&refreshToken=${refreshToken}`,
             );
             throw new ForbiddenException('Access Denied');
         }
 
-        const refresh_token = await this.generateRefreshToken(
-            user.id,
-            user.username
-        );
-        const access_token = await this.generateAccessToken(
-            user.id,
-            user.username
-        );
-        await this.updateRefreshToken(user.id, refresh_token);
+        const updatedRefreshToken = await this.generateRefreshToken(user.id, user.username);
+        const updatedAccessToken = await this.generateAccessToken(user.id, user.username);
+        await this.updateRefreshToken(user.id, updatedRefreshToken);
         return {
-            refreshToken: refresh_token,
-            accessToken: access_token
+            refreshToken: updatedRefreshToken,
+            accessToken: updatedAccessToken,
         };
     }
 }
