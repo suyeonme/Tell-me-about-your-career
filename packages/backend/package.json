@@ -19,6 +19,7 @@
     "test:debug": "cross-env NODE_ENV=test node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json",
     "checkTs": "tsc --noEmit",
+    "checkEslint": "eslint .",
     "prepare": "chmod ug+x .husky/* && cd ../.. && husky install packages/backend/.husky"
   },
   "dependencies": {

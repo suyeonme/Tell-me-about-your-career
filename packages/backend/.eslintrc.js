@@ -5,11 +5,11 @@ module.exports = {
         browser: true,
         // es2021: true
     },
-    ignorePatterns: ['/node_modules/**', '.eslintrc.js', '/src/assets/*'],
+    ignorePatterns: [],
     extends: [
         'eslint:recommended',
         'plugin:@typescript-eslint/recommended',
-        // 'plugin:prettier/recommended'
+        // 'plugin:prettier/recommended',
     ],
     parser: '@typescript-eslint/parser',
     parserOptions: {
