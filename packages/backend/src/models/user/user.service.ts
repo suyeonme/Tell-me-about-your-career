@@ -11,7 +11,7 @@ export class UserService {
 
     constructor(
         @InjectRepository(User)
-        private userRepository: Repository<User>
+        private userRepository: Repository<User>,
     ) {}
 
     async create(signupUserDto: SignupUserDto): Promise<User> {
@@ -24,13 +24,10 @@ export class UserService {
         if (user === null) {
             this.logger.error(
                 `Fail to update a user. User is null: userId=${userId}&updateUserDto=${JSON.stringify(
-                    updateUserDto
-                )}`
+                    updateUserDto,
+                )}`,
             );
-            throw new HttpException(
-                'User with this id does not exist.',
-                HttpStatus.NOT_FOUND
-            );
+            throw new HttpException('User with this id does not exist.', HttpStatus.NOT_FOUND);
         }
         return this.userRepository.save({ ...user, ...updateUserDto });
     }
@@ -38,18 +35,14 @@ export class UserService {
     async remove(userId: number): Promise<User | null> {
         const user = await this.findOneById(userId);
         if (user === null) {
-            this.logger.error(
-                `Fail to remove a user. User is null: userId=${userId}}`
-            );
-            throw new HttpException(
-                'User with this id does not exist.',
-                HttpStatus.NOT_FOUND
-            );
+            this.logger.error(`Fail to remove a user. User is null: userId=${userId}}`);
+            throw new HttpException('User with this id does not exist.', HttpStatus.NOT_FOUND);
         }
         return this.userRepository.remove(user);
     }
 
-    async findAll(): Promise<Array<User>> {
+    // async findAll(): Promise<Array<User>> {
+    async findAll(): Promise<User[]> {
         const users = await this.userRepository.find();
         return users;
     }

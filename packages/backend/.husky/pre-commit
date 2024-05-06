@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+
+# 현재 스크립트 파일이 위치한 디렉토리를 기준으로 .husky.sh 파일을 실행
+. "$(dirname -- "$0")/_/husky.sh"
+
+cd packages/backend
+pnpm run checkTs
+pnpm run lintStaged
+
+exit 1
