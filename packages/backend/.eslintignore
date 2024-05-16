@@ -4,3 +4,4 @@
 /dist/**
 /test/*
 /logs/*
+commitlint.config.js

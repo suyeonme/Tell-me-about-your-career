@@ -5,8 +5,4 @@
 
 cd packages/backend
 
-# Run type checks
-pnpm run checkTs
-
-# Run linters
-pnpm run lintStaged
+pnpm dlx commitlint --edit $1
