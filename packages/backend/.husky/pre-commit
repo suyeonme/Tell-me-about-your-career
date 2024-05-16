@@ -5,6 +5,9 @@
 
 cd packages/backend
 
+# Check console.log is included in staged files
+sh scripts/check-console.log.sh
+
 # Run type checks
 pnpm run checkTs
 
