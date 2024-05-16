@@ -37,6 +37,9 @@ MAIL_PASSWORD=YOUR_OWN
 
 ```bash
 pnpm install
+
+# Run husky
+pnpm run prepare
 ```
 
 Start backend server on development mode
