@@ -38,7 +38,7 @@ MAIL_PASSWORD=YOUR_OWN
 ```bash
 pnpm install
 
-# Run husky
+# Run Github hooks with Husky
 pnpm run prepare
 ```
 
@@ -56,4 +56,8 @@ If you want to run Swagger UI, run the command.
 http://localhost:3300/api
 ```
 
+---
 
+## Convention
+1. Commit: feat(MODULE_NAME): message -- [commitlint](https://commitlint.js.org/)
+2. console should be removed before commit.
