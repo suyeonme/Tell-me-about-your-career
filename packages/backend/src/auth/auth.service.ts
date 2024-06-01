@@ -110,7 +110,7 @@ export class AuthService {
                 username,
             },
             {
-                secret: this.config.jwt.accessSecret,
+                secret: this.config.jwt.secretKey,
                 expiresIn: this.config.jwt.accessExpireTime,
             },
         );
