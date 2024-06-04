@@ -41,7 +41,6 @@ export class UserService {
         return this.userRepository.remove(user);
     }
 
-    // async findAll(): Promise<Array<User>> {
     async findAll(): Promise<Array<User>> {
         const users = await this.userRepository.find();
         return users;

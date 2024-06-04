@@ -13,6 +13,7 @@ import { Request as Req } from 'express';
 import { AuthService } from '@/auth/auth.service';
 import { LocalAuthGuard } from '@auth/guards/local-auth.guard';
 import { AccessTokenGuard } from '@auth/guards/access-token.guard';
+import { ExcludePasswordInterceptor } from '@common/interceptors/exclude-password.interceptor';
 import { SignupUserDto, SigninUserDto } from '@models/user/dto';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
 
@@ -21,18 +22,21 @@ import { RefreshTokenGuard } from './guards/refresh-token.guard';
 export class AuthController {
     constructor(private authService: AuthService) {}
 
+    @UseInterceptors(ExcludePasswordInterceptor)
     @Post('/signup')
     async signup(@Body() signupUserDto: SignupUserDto) {
         return this.authService.signup(signupUserDto);
     }
 
     @UseGuards(LocalAuthGuard)
+    @UseInterceptors(ExcludePasswordInterceptor)
     @Post('/signin')
     async login(@Request() _req: Req, @Body() signinUserDto: SigninUserDto) {
         return this.authService.signin(signinUserDto);
     }
 
     @UseGuards(AccessTokenGuard)
+    @UseInterceptors(ExcludePasswordInterceptor)
     @Get('/signout')
     async signout(@Request() req: Req) {
         const user = req.user as { sub: number };

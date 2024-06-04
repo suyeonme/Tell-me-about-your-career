@@ -16,7 +16,6 @@ import type { SignupUserDto } from '@models/user/dto/signup-user.dto';
 import type { SigninUserDto } from '@models/user/dto';
 import appConfig from '@config/app.config';
 import type { AuthResponse } from './auth.service.types';
-import type { User } from '@models/user/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -55,11 +54,7 @@ export class AuthService {
             `Signup successful: email=${signupUserDto.email}&username=${signupUserDto.username}`,
         );
 
-        return {
-            ...this.removePasswordFromUser({ ...user }),
-            refreshToken,
-            accessToken,
-        };
+        return Object.assign(user, { refreshToken, accessToken });
     }
 
     async signin(signinDto: SigninUserDto): Promise<AuthResponse> {
@@ -75,19 +70,7 @@ export class AuthService {
         await this.updateRefreshToken(user.id, refreshToken);
         this.logger.log(`Signin successful: email=${signinDto.email}`);
 
-        return {
-            ...this.removePasswordFromUser({ ...user }),
-            refreshToken,
-            accessToken,
-        };
-    }
-
-    removePasswordFromUser(user: User): Omit<User, 'password'> {
-        const cloned: Partial<User> = { ...user };
-        if (cloned.password) {
-            delete cloned.password;
-        }
-        return cloned as Omit<User, 'password'>;
+        return Object.assign(user, { refreshToken, accessToken });
     }
 
     async signout(userId: number) {
