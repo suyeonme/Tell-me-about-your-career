@@ -15,6 +15,7 @@ import { InterviewModule } from './models/interview/interview.module';
 import { UserModule } from './models/user/user.module';
 import { User } from './models/user/user.entity';
 import { AuthModule } from './auth/auth.module';
+import { JobInterview } from '@models/interview/entity/interview.entity';
 
 @Module({
     imports: [
@@ -26,8 +27,8 @@ import { AuthModule } from './auth/auth.module';
         TypeOrmModule.forRoot({
             type: 'sqlite',
             database: `${process.env.NODE_ENV}.db`,
-            entities: [User],
-            synchronize: true,
+            entities: [User, JobInterview],
+            synchronize: true, // use only dev mode
         }),
         ThrottlerModule.forRootAsync({
             imports: [ConfigModule],
