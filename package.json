@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "backend-dev": "pnpm -F @tellme/backend start:dev",
+    "frontend-dev": "pnpm -F @tellme/frontend dev",
     "dev": "pnpm -r dev"
   },
   "keywords": [],
