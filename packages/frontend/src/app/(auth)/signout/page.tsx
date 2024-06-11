@@ -1,9 +1,9 @@
 import Image from "next/image";
 
-export default function Home() {
+export default function Signin() {
   return (
     <main>
-      <h1>Welcome page</h1>
+      <h1>Signout page</h1>
     </main>
   );
 }
