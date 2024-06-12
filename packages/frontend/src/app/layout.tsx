@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
-import Navigation from "@components/navigation";
-import NAVIGATION from "@constants/navigation";
 
-const inter = Inter({ subsets: ["latin"] });
+import "./globals.css";
+import { Navigation } from "@components";
+import NAVIGATION from "@constants/navigation";
 
 export const metadata: Metadata = {
   title: "Tell me about your career",
@@ -18,9 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body suppressHydrationWarning>
         <header>
-          <Navigation links={NAVIGATION} />
+          <Navigation links={NAVIGATION} logoSrc="/logo-2.svg" />
         </header>
         {children}
       </body>
