@@ -1,9 +1,10 @@
-import Image from "next/image";
+import { LoadingSpinner } from "@components";
 
 export default function Home() {
   return (
     <main>
       <h1>Welcome page</h1>
+      <LoadingSpinner size="md" />
     </main>
   );
 }

@@ -1,76 +1,53 @@
-import type { ButtonType, ButtonColor, ButtonSize } from "./Button.type";
-
-/**@todo storybook */
+import React from "react";
+import { LoadingSpinner } from "@components";
+import type { ButtonType, ButtonStatus, ButtonSize } from "./Button.type";
+import {
+  BUTTON_TYPE_COLORS,
+  BUTTON_SIZE,
+  BUTTON_LOADING_COLORS,
+} from "./Button.style";
 
 interface ButtonProps {
   /**@description 버튼의 기본 형태 */
   type: ButtonType;
-  color: ButtonColor;
+  status: ButtonStatus;
   size: ButtonSize;
   /**@description 커스텀 스타일 */
   className?: string;
   onClick: () => void;
+  isLoading?: boolean;
   children: React.ReactNode;
 }
 
 const Button = ({
   type,
   size,
-  color,
+  status,
   className,
+  isLoading,
   onClick,
   children,
 }: ButtonProps) => {
-  let applyColor = "";
-  let applyHoverColor = "";
-
-  switch (color) {
-    case "critical":
-      applyColor = "critical";
-      applyHoverColor = "critical_hover";
-      break;
-    case "normal":
-    default:
-      applyColor = "black";
-      applyHoverColor = "normal_hover";
-      break;
-  }
-
-  let applyClassName = "rounded" + " ";
-
-  switch (type) {
-    case "fill":
-      applyClassName += `bg-${applyColor} text-white hover:bg-${applyHoverColor} transition-colors duration-300`;
-      break;
-    case "text":
-      applyClassName += `text-${applyColor} hover:text-${applyHoverColor} transition-colors duration-300`;
-      break;
-    case "outline":
-    default:
-      applyClassName += `border-solid border-2 border-${applyColor} text-${applyColor} hover:bg-${applyColor} hover:text-white transition-colors duration-300`;
-      break;
-  }
-
-  switch (size) {
-    case "sm":
-      applyClassName += " py-1.5 px-3 text-sm";
-      break;
-    case "md":
-      applyClassName += " py-2 px-4 text-sm";
-      break;
-    case "lg":
-      applyClassName += " py-2 px-4 text-base";
-      break;
-  }
+  let applyClassName = "rounded transition-colors duration-300" + " ";
+  applyClassName += BUTTON_TYPE_COLORS[type][status] + " ";
+  applyClassName += BUTTON_SIZE[size];
 
   return (
     <button
       className={className ? `${applyClassName} ${className}` : applyClassName}
       onClick={onClick}
     >
-      {children}
+      <span className="flex align-middle gap-1">
+        {isLoading !== undefined && isLoading === true && (
+          <LoadingSpinner
+            size="sm"
+            color={`border-${BUTTON_LOADING_COLORS[type][status]}`}
+          />
+        )}
+        {children}
+      </span>
     </button>
   );
 };
 
-export default Button;
+export default React.memo(Button);

@@ -14,7 +14,7 @@ const Navigation = ({ links, logoSrc }: NavigationProps) => {
   const pathname = usePathname();
 
   return (
-    <nav className="border-solid border-b border-black flex p-2">
+    <nav className="border-solid border-b border-black flex justify-between p-2">
       <a href="/">
         <Image src={logoSrc} alt="Logo" width="100" height="100" />
       </a>
@@ -38,8 +38,9 @@ const Navigation = ({ links, logoSrc }: NavigationProps) => {
       <Button
         type="outline"
         size="md"
-        color="normal"
+        status="normal"
         onClick={() => console.log("Clicked!")}
+        isLoading={true}
       >
         Signin
       </Button>
