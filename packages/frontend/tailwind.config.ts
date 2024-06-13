@@ -16,6 +16,15 @@ const config: Config = {
         critical_hover: "#ef4444", // red-500
         warning: "#fb923c", // orange-400
       },
+      animation: {
+        spin: "spin 1s linear infinite",
+      },
+      keyframes: {
+        spin: {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+      },
     },
   },
   plugins: [],
