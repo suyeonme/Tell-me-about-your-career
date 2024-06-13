@@ -36,7 +36,7 @@ const Navigation = ({ links, logoSrc }: NavigationProps) => {
       </ul>
 
       <Button
-        type="outline"
+        variant="outline"
         size="md"
         status="normal"
         onClick={() => console.log("Clicked!")}

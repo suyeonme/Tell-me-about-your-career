@@ -193,6 +193,9 @@ importers:
       '@chromatic-com/storybook':
         specifier: ^1.5.0
         version: 1.5.0(react@18.3.1)
+      '@storybook/addon-docs':
+        specifier: ^8.1.8
+        version: 8.1.8(@types/react-dom@18.3.0)(prettier@3.3.2)
       '@storybook/addon-essentials':
         specifier: ^8.1.8
         version: 8.1.8(@types/react-dom@18.3.0)(@types/react@18.3.3)(prettier@3.3.2)(react-dom@18.3.1)(react@18.3.1)
@@ -4280,10 +4283,10 @@ packages:
   /@storybook/csf-tools@8.1.8:
     resolution: {integrity: sha512-5kI0q2HPGNqaedjNx4Eh5uQf3f6qSyUa14fT4GCAAGgbG0YgUeIff4N95XZ1VVeQ14epx2UK4p3+FsD58Lwnig==}
     dependencies:
-      '@babel/generator': 7.24.4
-      '@babel/parser': 7.24.4
-      '@babel/traverse': 7.24.1
-      '@babel/types': 7.24.0
+      '@babel/generator': 7.24.7
+      '@babel/parser': 7.24.7
+      '@babel/traverse': 7.24.7
+      '@babel/types': 7.24.7
       '@storybook/csf': 0.1.8
       '@storybook/types': 8.1.8
       fs-extra: 11.2.0

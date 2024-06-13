@@ -15,6 +15,9 @@ const config: Config = {
         critical: "#b91c1c", // red-700
         critical_hover: "#ef4444", // red-500
         warning: "#fb923c", // orange-400
+
+        "disabled-bg": "#d1d5db", // gray-300 color
+        "disabled-text": "#9ca3af", // gray-400 color
       },
       animation: {
         spin: "spin 1s linear infinite",
@@ -25,6 +28,13 @@ const config: Config = {
           "100%": { transform: "rotate(360deg)" },
         },
       },
+    },
+  },
+  variants: {
+    extend: {
+      backgroundColor: ["disabled"],
+      textColor: ["disabled"],
+      cursor: ["disabled"],
     },
   },
   plugins: [],

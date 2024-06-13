@@ -24,7 +24,7 @@ pnpm run dev
 If you want to run Storybook, run the command.
 
 ```
-# script
+pnpm run storybook
 ```
 
 ---

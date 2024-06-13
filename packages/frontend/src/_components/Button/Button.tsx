@@ -1,6 +1,7 @@
 import React from "react";
-import { LoadingSpinner } from "@components";
-import type { ButtonType, ButtonStatus, ButtonSize } from "./Button.type";
+
+// import { LoadingSpinner } from "@components";
+import type { ButtonVariant, ButtonStatus, ButtonSize } from "./Button.type";
 import {
   BUTTON_TYPE_COLORS,
   BUTTON_SIZE,
@@ -8,19 +9,18 @@ import {
 } from "./Button.style";
 
 interface ButtonProps {
-  /**@description 버튼의 기본 형태 */
-  type: ButtonType;
+  variant: ButtonVariant;
   status: ButtonStatus;
   size: ButtonSize;
   /**@description 커스텀 스타일 */
   className?: string;
-  onClick: () => void;
   isLoading?: boolean;
+  onClick: (e?: React.MouseEvent<HTMLButtonElement>) => void;
   children: React.ReactNode;
 }
 
 const Button = ({
-  type,
+  variant,
   size,
   status,
   className,
@@ -29,7 +29,7 @@ const Button = ({
   children,
 }: ButtonProps) => {
   let applyClassName = "rounded transition-colors duration-300" + " ";
-  applyClassName += BUTTON_TYPE_COLORS[type][status] + " ";
+  applyClassName += BUTTON_TYPE_COLORS[variant][status] + " ";
   applyClassName += BUTTON_SIZE[size];
 
   return (
@@ -38,12 +38,12 @@ const Button = ({
       onClick={onClick}
     >
       <span className="flex align-middle gap-1">
-        {isLoading !== undefined && isLoading === true && (
+        {/* {isLoading !== undefined && isLoading === true && (
           <LoadingSpinner
             size="sm"
-            color={`border-${BUTTON_LOADING_COLORS[type][status]}`}
+            color={`border-${BUTTON_LOADING_COLORS[variant][status]}`}
           />
-        )}
+        )} */}
         {children}
       </span>
     </button>
