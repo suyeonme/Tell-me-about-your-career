@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
-import { action } from "@storybook/addon-actions";
 
 import Button from "./Button";
 import type { ButtonSize, ButtonVariant, ButtonStatus } from "./Button.type";
@@ -73,8 +72,7 @@ const meta = {
 } satisfies Meta<typeof Button>;
 
 export default meta;
-
-// type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof meta>;
 
 export const Size = () => {
   return (
@@ -87,7 +85,7 @@ export const Size = () => {
             size={size}
             status="normal"
             isLoading={false}
-            onClick={() => action("Button is Clicked")}
+            onClick={() => console.log("Button is Clicked")}
           >
             Button
           </Button>
@@ -108,7 +106,7 @@ export const Variant = () => {
             size="md"
             status="normal"
             isLoading={false}
-            onClick={() => action("Button is Clicked")}
+            onClick={() => console.log("Button is Clicked")}
           >
             Button
           </Button>
@@ -129,7 +127,7 @@ export const Status = () => {
             size="md"
             status={status}
             isLoading={false}
-            onClick={() => action("Button is Clicked")}
+            onClick={() => console.log("Button is Clicked")}
           >
             Button
           </Button>
@@ -137,4 +135,21 @@ export const Status = () => {
       ))}
     </div>
   );
+};
+
+export const Loading: Story = {
+  args: {
+    variant: "fill",
+    size: "md",
+    status: "normal",
+    isLoading: true,
+    children: "Button",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "Loading state for a button component.",
+      },
+    },
+  },
 };

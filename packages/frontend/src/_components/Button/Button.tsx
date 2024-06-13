@@ -1,6 +1,6 @@
 import React from "react";
 
-// import { LoadingSpinner } from "@components";
+import LoadingSpinner from "@components/LoadingSpinner/LoadingSpinner";
 import type { ButtonVariant, ButtonStatus, ButtonSize } from "./Button.type";
 import {
   BUTTON_TYPE_COLORS,
@@ -38,12 +38,12 @@ const Button = ({
       onClick={onClick}
     >
       <span className="flex align-middle gap-1">
-        {/* {isLoading !== undefined && isLoading === true && (
+        {isLoading !== undefined && isLoading === true && (
           <LoadingSpinner
             size="sm"
             color={`border-${BUTTON_LOADING_COLORS[variant][status]}`}
           />
-        )} */}
+        )}
         {children}
       </span>
     </button>
