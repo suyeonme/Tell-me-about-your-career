@@ -4,10 +4,39 @@
 
 body {
   @apply bg-white text-black;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+}
+
+main {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+}
+
+section {
+  @apply p-2;
+}
+
+h1 {
+  @apply text-2xl font-bold;
+}
+
+.solid-border-black {
+  @apply border-solid border-2 border-black;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+
+
 }

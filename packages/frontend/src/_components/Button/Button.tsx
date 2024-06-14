@@ -37,7 +37,7 @@ const Button = ({
       className={className ? `${applyClassName} ${className}` : applyClassName}
       onClick={onClick}
     >
-      <span className="flex align-middle gap-1">
+      <span className="flex align-middle justify-center gap-1">
         {isLoading !== undefined && isLoading === true && (
           <LoadingSpinner
             size="sm"

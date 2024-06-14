@@ -18,7 +18,8 @@ const meta: Meta<typeof LoadingSpinner> = {
     layout: "centered",
     docs: {
       description: {
-        component: "Display a loading spinner when fetching data",
+        component:
+          "LoadingSpinner component used for indicating fetching data.",
       },
     },
   },

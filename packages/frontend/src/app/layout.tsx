@@ -21,7 +21,7 @@ export default function RootLayout({
         <header>
           <Navigation links={NAVIGATION} logoSrc="/logo-2.svg" />
         </header>
-        {children}
+        <main>{children}</main>
       </body>
     </html>
   );

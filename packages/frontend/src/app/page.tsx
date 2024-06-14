@@ -2,9 +2,9 @@ import { LoadingSpinner } from "@components";
 
 export default function Home() {
   return (
-    <main>
+    <section>
       <h1>Welcome page</h1>
       <LoadingSpinner size="md" />
-    </main>
+    </section>
   );
 }
