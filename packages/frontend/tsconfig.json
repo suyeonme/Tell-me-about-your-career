@@ -21,7 +21,8 @@
     "paths": {
       "@constants/*": ["_constants/*"],
       "@components/*": ["_components/*"],
-      "@components": ["_components/index"]
+      "@components": ["_components/index"],
+      "@api/*": ["_api/*"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
