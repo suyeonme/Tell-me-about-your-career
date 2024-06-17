@@ -42,18 +42,15 @@ export class UserService {
     }
 
     async findAll(): Promise<Array<User>> {
-        const users = await this.userRepository.find();
-        return users;
+        return this.userRepository.find();
     }
 
     async findOneByEmail(email: string): Promise<User | null> {
-        const user = await this.userRepository.findOneBy({ email });
-        return user;
+        return this.userRepository.findOneBy({ email });
     }
 
     async findOneById(userId: number): Promise<User | null> {
-        const user = await this.userRepository.findOneBy({ id: userId });
-        return user;
+        return this.userRepository.findOneBy({ id: userId });
     }
 
     async isEmailExist(email: string): Promise<boolean> {

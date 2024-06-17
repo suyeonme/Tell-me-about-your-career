@@ -2,15 +2,12 @@ import {
     UseInterceptors,
     type NestInterceptor,
     type ExecutionContext,
-    type CallHandler
+    type CallHandler,
 } from '@nestjs/common';
 import type { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { plainToInstance } from 'class-transformer';
 
-/**
- * @description Accept only class (typescript)
- */
 interface ClassConstructor {
     new (...args: Array<unknown>): unknown;
 }
@@ -20,15 +17,15 @@ export class SerializeInterceptor implements NestInterceptor {
 
     intercept(
         _context: ExecutionContext, // before request
-        handler: CallHandler // before response
+        handler: CallHandler, // before response
     ): Observable<unknown> | Promise<Observable<unknown>> {
         return handler.handle().pipe(
             map((data: unknown) => {
-                // convert entity to a plain javascript object
+                // entity를 자바스크립트 객체로 변환
                 return plainToInstance(this.dto, data, {
-                    excludeExtraneousValues: true // exclude any properties that are not defined in the DTO
+                    excludeExtraneousValues: true,
                 });
-            })
+            }),
         );
     }
 }

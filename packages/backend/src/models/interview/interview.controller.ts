@@ -9,6 +9,8 @@ import {
     Delete,
     Query,
     Patch,
+    UseInterceptors,
+    ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { Request as Req } from 'express';
 import { AccessTokenGuard } from '@auth/guards/access-token.guard';
@@ -18,6 +20,7 @@ import type { JobInterview } from '@models/interview/entity/interview.entity';
 
 @Controller('interview')
 @UseGuards(AccessTokenGuard)
+@UseInterceptors(ClassSerializerInterceptor)
 export class InterviewController {
     constructor(private readonly interviewService: InterviewService) {}
 

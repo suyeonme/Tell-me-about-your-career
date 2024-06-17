@@ -14,6 +14,7 @@ import { MailService } from '@mail/mail.service';
 import { UserService } from '@models/user/user.service';
 import type { SignupUserDto } from '@models/user/dto/signup-user.dto';
 import type { SigninUserDto } from '@models/user/dto';
+import type { User } from '@models/user/user.entity';
 import appConfig from '@config/app.config';
 import type { AuthResponse } from './auth.service.types';
 
@@ -57,7 +58,10 @@ export class AuthService {
         return Object.assign(user, { refreshToken, accessToken });
     }
 
-    async signin(signinDto: SigninUserDto): Promise<AuthResponse> {
+    async signin(signinDto: SigninUserDto): Promise<{
+        user: User;
+        accessToken: string;
+    }> {
         const user = await this.usersService.findOneByEmail(signinDto.email);
 
         if (!user) {
@@ -69,8 +73,7 @@ export class AuthService {
         const refreshToken = await this.generateRefreshToken(user.id, user.username);
         await this.updateRefreshToken(user.id, refreshToken);
         this.logger.log(`Signin successful: email=${signinDto.email}`);
-
-        return Object.assign(user, { refreshToken, accessToken });
+        return { user, accessToken };
     }
 
     async signout(userId: number) {

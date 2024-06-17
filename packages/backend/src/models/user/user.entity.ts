@@ -28,6 +28,7 @@ export class User {
     role: Role;
 
     @Column({ type: 'varchar', nullable: true })
+    @Exclude()
     refreshToken: string | null;
 
     @OneToMany(() => JobInterview, (post) => post.author)

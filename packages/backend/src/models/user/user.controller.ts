@@ -25,12 +25,7 @@ export class UserController {
 
     @Get()
     async findAll() {
-        const users = await this.userService.findAll();
-        const result = users.map((user) => {
-            const { refreshToken, ...rest } = user; // eslint-disable-line
-            return rest;
-        });
-        return result;
+        return this.userService.findAll();
     }
 
     @Get(':id')
