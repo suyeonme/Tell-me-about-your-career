@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Navigation } from "@components";
 import NAVIGATION from "@constants/navigation";
-import ReactQueryProvider from "@api/utils/react-query/ReactQueryProvider";
+import ReactQueryProvider from "@api/utils/reactQuery/ReactQueryProvider";
 
 export const metadata: Metadata = {
   title: "Tell me about your career",
