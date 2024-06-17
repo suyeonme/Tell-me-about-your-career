@@ -12,11 +12,16 @@ const bootstrap = async () => {
     app.useGlobalPipes(
         new ValidationPipe({
             whitelist: true,
-            forbidUnknownValues: true
-        })
+            forbidUnknownValues: true,
+        }),
     );
 
     app.useLogger(winstonLogger);
+    app.enableCors({
+        origin: process.env.CORS_ORIGIN ? [process.env.CORS_ORIGIN] : [],
+        credentials: true,
+        allowedHeaders: 'Content-Type, Accept',
+    });
     await app.listen(3300);
 };
 bootstrap();
