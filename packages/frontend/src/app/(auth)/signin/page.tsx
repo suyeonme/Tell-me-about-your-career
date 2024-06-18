@@ -4,11 +4,10 @@ import { useRouter } from "next/navigation";
 import { useMutation } from "react-query";
 
 import { signin } from "@api/api/auth";
-import { FormPanel, Button } from "@components";
-import { useSignForm } from "../_hooks/useSignForm";
-import { AxiosError } from "axios";
+import { FormPanel, Button, Input } from "@components";
 import type { BaseResponse, User } from "@api/utils/response.type";
 import { CustomAxiosError } from "@api/utils/response.type";
+import { useSignForm } from "../_hooks/useSignForm";
 
 const Signin = () => {
   const router = useRouter();
@@ -44,29 +43,23 @@ const Signin = () => {
     <section className="h-full">
       <FormPanel title="Signin">
         <form method="post" onSubmit={mutate} className="flex flex-col gap-4">
-          <input
+          <Input
             type="email"
             name="email"
-            required
             placeholder="Email"
-            className={
-              isError
-                ? "border-2 border-critical rounded"
-                : "border-2 solid-border-black rounded"
+            status={isError ? "critical" : "normal"}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              handleChangeForm("email", e.target.value)
             }
-            onChange={(e) => handleChangeForm("email", e.target.value)}
           />
-          <input
+          <Input
             type="password"
             name="password"
-            required
             placeholder="Password"
-            className={
-              isError
-                ? "border-2 border-critical rounded"
-                : "border-2 solid-border-black rounded"
+            status={isError ? "critical" : "normal"}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              handleChangeForm("password", e.target.value)
             }
-            onChange={(e) => handleChangeForm("password", e.target.value)}
           />
           <Button
             variant="fill"
