@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig } from "axios";
 import config from "@config/env.config";
-import { REQUEST_TIMEOUT, ACCESS_TOKEN_KEY } from "./constant";
+import { REQUEST_TIMEOUT, ACCESS_TOKEN_KEY } from "./axios.meta";
 import { errorMessageLogger } from "./utils";
 
 export const createBaseAPI = (
@@ -80,7 +80,12 @@ export const addResponseInterceptors = (
         }
       }
 
-      return Promise.reject(error);
+      /**@description 서버에서 보낸 에러 메세지를 전달 */
+      return Promise.reject({
+        ...error,
+        message: error?.response?.data?.message ?? error.message,
+        status: error?.response?.status,
+      });
     }
   );
 };

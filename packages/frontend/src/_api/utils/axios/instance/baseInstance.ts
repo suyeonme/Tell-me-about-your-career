@@ -3,7 +3,7 @@ import {
   addRequestInterceptors,
   addResponseInterceptors,
 } from "../axios.config";
-import { APP_SERVER_BASE_URL } from "../constant";
+import { APP_SERVER_BASE_URL } from "../axios.meta";
 
 /**
  * @description 일반적인 API 요청시 사용하는 axios 인스턴스입니다.

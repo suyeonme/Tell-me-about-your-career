@@ -1,6 +1,6 @@
 import React from "react";
 
-import LoadingSpinner from "@components/LoadingSpinner/LoadingSpinner";
+import { LoadingSpinner } from "@components";
 import type { ButtonVariant, ButtonStatus, ButtonSize } from "./Button.type";
 import {
   BUTTON_TYPE_COLORS,

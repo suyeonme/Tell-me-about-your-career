@@ -1,61 +1,59 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signin } from "@api/api/auth";
-import { FormPanel } from "@components";
-import { AxiosError } from "axios";
+import { useMutation } from "react-query";
 
-interface SigninForm {
-  email: string;
-  password: string;
-}
+import { signin } from "@api/api/auth";
+import { FormPanel, Button } from "@components";
+import { useSignForm } from "../_hooks/useSignForm";
+import { AxiosError } from "axios";
+import type { BaseResponse, User } from "@api/utils/response.type";
+import { CustomAxiosError } from "@api/utils/response.type";
 
 const Signin = () => {
   const router = useRouter();
 
-  const [form, setForm] = useState<SigninForm>({ email: "", password: "" });
+  const { form, handleChangeForm, handleResetForm } = useSignForm();
 
-  const handleChangeForm = <K extends keyof SigninForm>(
-    key: K,
-    value: SigninForm[K]
-  ) => {
-    setForm({ ...form, [key]: value });
-  };
-
-  const handleResetForm = () => {
-    setForm({ email: "", password: "" });
-  };
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    // 새로고침 방지
-    event.preventDefault();
-
-    try {
-      const response = await signin(form);
-      const { data } = response;
-
-      if (data.statusCode === 201) {
+  const { mutate, isLoading, isError, data, error } = useMutation<
+    BaseResponse<User>,
+    CustomAxiosError,
+    React.FormEvent<HTMLFormElement>
+  >(
+    (event: React.FormEvent<HTMLFormElement>) => {
+      // 새로고침 방지
+      event.preventDefault();
+      return signin(form);
+    },
+    {
+      onSuccess: (data, variables, context) => {
         handleResetForm();
         router.push("/");
-      } else {
-        console.error(data.message);
-      }
-    } catch (error) {
-      /**@todo 에러 메세지 출력 */
+      },
+      onError: (error, variables, context) => {
+        /**@todo 에러 메세지 출력 */
+        console.log(error);
+      },
+      onSettled: (data, error, variables, context) => {
+        // finally
+      },
     }
-  };
+  );
 
   return (
     <section className="h-full">
       <FormPanel title="Signin">
-        <form onSubmit={handleSubmit} method="post">
+        <form method="post" onSubmit={mutate} className="flex flex-col gap-4">
           <input
             type="email"
             name="email"
             required
             placeholder="Email"
-            className="solid-border-black"
+            className={
+              isError
+                ? "border-2 border-critical rounded"
+                : "border-2 solid-border-black rounded"
+            }
             onChange={(e) => handleChangeForm("email", e.target.value)}
           />
           <input
@@ -63,11 +61,26 @@ const Signin = () => {
             name="password"
             required
             placeholder="Password"
-            className="solid-border-black"
+            className={
+              isError
+                ? "border-2 border-critical rounded"
+                : "border-2 solid-border-black rounded"
+            }
             onChange={(e) => handleChangeForm("password", e.target.value)}
           />
-          <input type="submit" value="Signin" />
+          <Button
+            variant="fill"
+            status={isError ? "critical" : "normal"}
+            size="md"
+            isLoading={isLoading}
+          >
+            <input type="submit" value="Signin" />
+          </Button>
         </form>
+
+        {isError && (
+          <span className="text-critical text-xs">{error.message}</span>
+        )}
       </FormPanel>
     </section>
   );
