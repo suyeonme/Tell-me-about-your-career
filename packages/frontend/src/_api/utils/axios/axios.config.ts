@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import config from "@config/env.config";
-import { REQUEST_TIMEOUT, ACCESS_TOKEN_KEY } from "./axios.meta";
+import localStorageKey from "@config/localStorage.meta";
+import { REQUEST_TIMEOUT } from "./axios.meta";
 import { errorMessageLogger } from "./utils";
 
 export const createBaseAPI = (
@@ -26,7 +27,7 @@ export const addRequestInterceptors = (
 ) => {
   instance.interceptors.request.use(
     (config) => {
-      const accessToken = localStorage.getItem(ACCESS_TOKEN_KEY);
+      const accessToken = localStorage.getItem(localStorageKey.AccessToken);
       if (accessToken) {
         config.headers["Authorization"] = `Bearer ${accessToken}`;
       }
@@ -46,9 +47,9 @@ export const addResponseInterceptors = (
 ) => {
   instance.interceptors.response.use(
     (response) => {
-      const accessToken = response.data.data[ACCESS_TOKEN_KEY];
+      const accessToken = response.data.data[localStorageKey.AccessToken];
       if (accessToken) {
-        localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+        localStorage.setItem(localStorageKey.AccessToken, accessToken);
       }
       return response;
     },
@@ -67,9 +68,9 @@ export const addResponseInterceptors = (
         originalRequest._retry = true;
         try {
           const { data } = await instance.get("/auth/refresh");
-          const accessToken = data[ACCESS_TOKEN_KEY];
+          const accessToken = data[localStorageKey.AccessToken];
 
-          localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+          localStorage.setItem(localStorageKey.AccessToken, accessToken);
           axios.defaults.headers.common[
             "Authorization"
           ] = `Bearer ${accessToken}`;
