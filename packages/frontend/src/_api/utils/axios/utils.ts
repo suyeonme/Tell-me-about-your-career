@@ -1,4 +1,6 @@
-export const generateMessageByStatusCode = (
+import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
+
+const generateMessageByStatusCode = (
   statusCode: number,
   errorMessage?: string
 ) => {
@@ -19,6 +21,30 @@ export const generateMessageByStatusCode = (
     }
     default: {
       return `에러가 발생했습니다. ${errorMessage ?? ""}`;
+    }
+  }
+};
+
+export const errorMessageLogger = (error: AxiosError): void => {
+  const { message } = error;
+  const { method, url } = error.config as AxiosRequestConfig;
+
+  /**@todo 토스트로 에러 메세지 디스플레이 */
+  if (error?.response) {
+    if (error.response?.status && error.response?.statusText) {
+      const {
+        status: statusCode,
+        statusText,
+        data,
+      } = error.response as AxiosResponse<{ message: string }>;
+      let errorMessage = generateMessageByStatusCode(statusCode);
+
+      /**@todo 요청 정보와 함께 에러 메세지를 Sentry에 로그로 남기기 */
+      console.error(
+        `[${method?.toUpperCase()}] ${url} | Error ${statusCode} ${statusText} | ${errorMessage} | ${
+          data?.message ?? error.message
+        }`
+      );
     }
   }
 };

@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { signin } from "@api/api/auth";
 import { FormPanel } from "@components";
+import { AxiosError } from "axios";
 
 interface SigninForm {
   email: string;
@@ -10,6 +12,8 @@ interface SigninForm {
 }
 
 const Signin = () => {
+  const router = useRouter();
+
   const [form, setForm] = useState<SigninForm>({ email: "", password: "" });
 
   const handleChangeForm = <K extends keyof SigninForm>(
@@ -19,15 +23,26 @@ const Signin = () => {
     setForm({ ...form, [key]: value });
   };
 
+  const handleResetForm = () => {
+    setForm({ email: "", password: "" });
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     // 새로고침 방지
     event.preventDefault();
 
     try {
-      const data = await signin(form);
-      console.log(data);
+      const response = await signin(form);
+      const { data } = response;
+
+      if (data.statusCode === 201) {
+        handleResetForm();
+        router.push("/");
+      } else {
+        console.error(data.message);
+      }
     } catch (error) {
-      console.log(error);
+      /**@todo 에러 메세지 출력 */
     }
   };
 

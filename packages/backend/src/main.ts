@@ -21,8 +21,9 @@ const bootstrap = async () => {
     app.use(cookieParser());
     app.enableCors({
         origin: process.env.CORS_ORIGIN ? [process.env.CORS_ORIGIN] : [],
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
         credentials: true,
-        allowedHeaders: 'Content-Type, Accept',
+        allowedHeaders: 'Content-Type, Accept, Authorization',
     });
     await app.listen(3300);
 };

@@ -1,4 +1,3 @@
-import baseInstance from "./base.instance";
-import authInstance from "./auth.instance";
+import baseInstance from "./baseInstance";
 
-export { baseInstance, authInstance };
+export { baseInstance };
