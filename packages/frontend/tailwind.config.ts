@@ -21,11 +21,16 @@ const config: Config = {
       },
       animation: {
         spin: "spin 1s linear infinite",
+        click: "click 0.2s ease-in-out",
       },
       keyframes: {
         spin: {
           "0%": { transform: "rotate(0deg)" },
           "100%": { transform: "rotate(360deg)" },
+        },
+        click: {
+          "0%, 100%": { transform: "scale(1)" },
+          "50%": { transform: "scale(0.95)" },
         },
       },
     },
@@ -35,6 +40,7 @@ const config: Config = {
       backgroundColor: ["disabled"],
       textColor: ["disabled"],
       cursor: ["disabled"],
+      animation: ["active"],
     },
   },
   plugins: [],
