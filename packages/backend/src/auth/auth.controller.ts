@@ -70,7 +70,7 @@ export class AuthController {
     }
 
     @UseGuards(RefreshTokenGuard)
-    @Get('/refresh')
+    @Post('/refresh')
     async refreshTokens(@Request() req: Req, @Res({ passthrough: true }) res: Response) {
         const user = req.user as { sub: number; refreshToken: string };
         const userId = user['sub'];

@@ -67,7 +67,13 @@ export const addResponseInterceptors = (
       if (error?.response?.status === 401 && !originalRequest?._retry) {
         originalRequest._retry = true;
         try {
-          const { data } = await instance.get("/auth/refresh");
+          const { data } = await instance.post(
+            "/auth/refresh",
+            {},
+            {
+              withCredentials: true,
+            }
+          );
           const accessToken = data[localStorageKey.AccessToken];
 
           localStorage.setItem(localStorageKey.AccessToken, accessToken);

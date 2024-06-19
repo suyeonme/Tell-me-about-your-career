@@ -25,6 +25,7 @@
     },
     "dependencies": {
         "@nestjs-modules/mailer": "^1.10.3",
+        "@nestjs/cli": "^10.3.2",
         "@nestjs/common": "^9.0.0",
         "@nestjs/config": "^3.0.0",
         "@nestjs/core": "^9.0.0",
@@ -54,7 +55,6 @@
     "devDependencies": {
         "@commitlint/cli": "^19.3.0",
         "@commitlint/config-conventional": "^19.2.2",
-        "@nestjs/cli": "^9.0.0",
         "@nestjs/schematics": "^9.0.0",
         "@nestjs/testing": "^9.0.0",
         "@types/cookie-parser": "^1.4.7",
