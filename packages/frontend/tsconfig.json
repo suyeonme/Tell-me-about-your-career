@@ -19,11 +19,12 @@
     ],
     "baseUrl": "./src",
     "paths": {
-      "@constants/*": ["_constants/*"],
+      "@meta/*": ["_meta/*"],
       "@components/*": ["_components/*"],
       "@components": ["_components/index"],
       "@api/*": ["_api/*"],
       "@config/*": ["_config/*"],
+      "@context/*": ["_context/*"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

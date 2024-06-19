@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 
 import "./globals.css";
 import { Navigation } from "@components";
-import NAVIGATION from "@constants/navigation";
+import NAVIGATION from "@meta/navigation";
+import { AuthProvider } from "@context/AuthContext";
 import ReactQueryProvider from "@api/utils/reactQuery/ReactQueryProvider";
 
 export const metadata: Metadata = {
@@ -23,7 +24,9 @@ const RootLayout = ({
         </header>
 
         <ReactQueryProvider>
-          <main>{children}</main>
+          <AuthProvider>
+            <main>{children}</main>
+          </AuthProvider>
         </ReactQueryProvider>
       </body>
     </html>
